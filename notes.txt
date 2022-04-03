@@ -1,0 +1,20 @@
+-- JavaFx Scene Builder Choose Bar Chart Axes Type
+https://stackoverflow.com/questions/21642456/javafx-scene-builder-choose-bar-chart-axes-type
+
+-- Руководство JavaFX Alert Dialog 
+https://betacode.net/11529/javafx-alert-dialog
+
+-- Руководство JavaFX TreeTableView
+https://betacode.net/11149/javafx-treetableview
+
+-- Руководство JavaFX BarChart и StackedBarChart 
+https://betacode.net/11107/javafx-barchart
+
+-- JavaFX example to create area chart with multiple series
+https://www.tutorialspoint.com/javafx-example-to-create-area-chart-with-multiple-series
+
+-- Line Chart. Official Guide
+https://docs.oracle.com/javafx/2/charts/line-chart.htm
+
+-- JavaFX SplitPane
+https://jenkov.com/tutorials/javafx/splitpane.html
