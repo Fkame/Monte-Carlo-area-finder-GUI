@@ -18,3 +18,16 @@ https://docs.oracle.com/javafx/2/charts/line-chart.htm
 
 -- JavaFX SplitPane
 https://jenkov.com/tutorials/javafx/splitpane.html
+
+-- ArithmeticException: "Non-terminating decimal expansion; no exact representable decimal result"
+https://stackoverflow.com/questions/4591206/arithmeticexception-non-terminating-decimal-expansion-no-exact-representable
+
+-- Java 8 – How to Sum BigDecimal using Stream?
+https://mkyong.com/java8/java-8-how-to-sum-bigdecimal-using-stream/
+
+-- Semantic versioning
+https://semver.org/lang/ru/
+
+-- Release code on github
+https://www.youtube.com/watch?v=Ob9llA_QhQY&t=369s
+
