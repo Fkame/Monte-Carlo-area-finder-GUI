@@ -31,3 +31,11 @@ https://semver.org/lang/ru/
 -- Release code on github
 https://www.youtube.com/watch?v=Ob9llA_QhQY&t=369s
 
+-- How to Make a Collection Read-Only in Java?
+https://www.geeksforgeeks.org/how-to-make-a-collection-read-only-in-java/
+
+-- JavaFX Use Chart Legend to toggle show/hide Series possible?
+https://stackoverflow.com/questions/44956955/javafx-use-chart-legend-to-toggle-show-hide-series-possible
+
+-- Reset scatter chart's node color in a mouse-clicked event
+https://stackoverflow.com/questions/64040215/reset-scatter-charts-node-color-in-a-mouse-clicked-event

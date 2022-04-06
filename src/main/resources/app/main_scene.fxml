@@ -8,11 +8,14 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.TreeTableColumn?>
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <SplitPane dividerPositions="0.32965931863727455" prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.MainController">
@@ -28,10 +31,10 @@
             <RowConstraints maxHeight="123.0" minHeight="10.0" prefHeight="59.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="142.0" minHeight="10.0" prefHeight="61.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="164.0" minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="166.0" minHeight="10.0" prefHeight="107.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="135.0" minHeight="10.0" prefHeight="85.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="73.0" minHeight="3.0" prefHeight="19.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="106.0" minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="166.0" minHeight="10.0" prefHeight="117.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="197.0" minHeight="10.0" prefHeight="126.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="73.0" minHeight="3.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="106.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
             <Label text="y1 = ln(x)" GridPane.halignment="CENTER">
@@ -64,16 +67,47 @@
                   <Font size="16.0" />
                </font>
             </TextField>
-            <Label text="Координаты описывающего прямоугольника в формате:2-х крайних точек: x1,y1;x2,y2" wrapText="true" GridPane.rowIndex="6">
+            <Label text="Координаты описывающего прямоугольника в формате 2-х диагональных точек: (x1;y1) и (x2;y2)" wrapText="true" GridPane.rowIndex="6">
                <font>
                   <Font size="18.0" />
                </font>
             </Label>
-            <TextField fx:id="enter_outershape" GridPane.rowIndex="7">
-               <font>
-                  <Font size="16.0" />
-               </font>
-            </TextField>
+            <TitledPane animated="false" collapsible="false" text="Координаты описывающего прямоугольника" GridPane.rowIndex="7">
+               <content>
+                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0">
+                     <children>
+                        <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                           <children>
+                              <TextField fx:id="enter_outershapeX1" promptText="Enter X1">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="enter_outershapeX2" promptText="Enter X2">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </HBox>
+                        <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                           <children>
+                              <TextField fx:id="enter_outershapeY1" promptText="Enter Y1">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="enter_outershapeY2" promptText="Enter Y2">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </content>
+            </TitledPane>
             <Button fx:id="start_btn" mnemonicParsing="false" onAction="#startMethod" prefHeight="25.0" prefWidth="169.0" text="Запустить модель" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.vgrow="ALWAYS">
                <font>
                   <Font size="16.0" />
@@ -91,7 +125,7 @@
       </GridPane>
       <SplitPane dividerPositions="0.5" orientation="VERTICAL">
          <items>
-            <ScatterChart fx:id="points_chart" prefHeight="164.0" prefWidth="695.0">
+            <ScatterChart fx:id="points_chart">
               <xAxis>
                 <NumberAxis side="BOTTOM" />
               </xAxis>

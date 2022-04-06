@@ -14,10 +14,13 @@ import java.io.IOException;
 public class App extends Application {
 
     private static Scene scene;
+    private static MainController controller;
 
     @Override
     public void start(Stage stage) throws IOException {
         scene = new Scene(loadFXML("main_scene"));
+        controller.prepareSeriesAndCharts();
+
         stage.setScene(scene);
         stage.centerOnScreen();
         stage.show();
@@ -29,7 +32,9 @@ public class App extends Application {
 
     private static Parent loadFXML(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
-        return fxmlLoader.load();
+        Parent root = fxmlLoader.load();
+        App.controller = fxmlLoader.getController();
+        return root;
     }
 
     public static void main(String[] args) {

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 
 public class MonteCarloAreaMethod {
     
@@ -35,6 +36,19 @@ public class MonteCarloAreaMethod {
         this.leftUpperPoint =   new Point2D(x1BigArea, y2BigArea);
         this.rightUpperPoint =  new Point2D(x2BigArea, y2BigArea);
         this.rightBottomPoint = new Point2D(x2BigArea, y1BigArea);
+        this.generator = generator;
+
+        allGeneratedPoints = new ArrayList<ArrayList<StatePoint2D>>();
+        lastRunGeneratedPoints = new ArrayList<StatePoint2D>();
+    }
+
+    public MonteCarloAreaMethod(Rectangle2D rectangeArea, Random generator) {
+        if (rectangeArea == null) throw new IllegalArgumentException("input area must not be null!");
+        if (generator == null) throw new IllegalArgumentException("Generator must not be null!");
+        this.leftBottomPoint =  new Point2D(rectangeArea.getMinX(), rectangeArea.getMinY());
+        this.leftUpperPoint =   new Point2D(rectangeArea.getMinX(), rectangeArea.getMaxY());
+        this.rightUpperPoint =  new Point2D(rectangeArea.getMaxX(), rectangeArea.getMaxY());
+        this.rightBottomPoint = new Point2D(rectangeArea.getMaxX(), rectangeArea.getMinY());
         this.generator = generator;
 
         allGeneratedPoints = new ArrayList<ArrayList<StatePoint2D>>();
@@ -98,5 +112,13 @@ public class MonteCarloAreaMethod {
 
     public List<StatePoint2D> getLastRunGeneratedPoints() {
         return Collections.unmodifiableList(lastRunGeneratedPoints);
+    }
+
+    public void cleanAllSavedData() {
+        this.lastRunGeneratedPoints.clear();
+        for (int i = 0; i < this.allGeneratedPoints.size(); i++) {
+            this.allGeneratedPoints.get(i).clear();
+        }
+        this.allGeneratedPoints.clear();
     }
 }
