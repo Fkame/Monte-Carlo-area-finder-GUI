@@ -199,24 +199,4 @@ public class MainController {
         scatterSeries2.setName("Точки во внешней фигуре");
         lineSeries.setName("AVG площади с учётом предыдущих экспериментов");
     }
-
-
-
-    //**TODO: сделать верификацию строки с указанием ошибки в знаках*/
-    @Deprecated
-    private Rectangle2D parseRectBy2Points(String toParse) {
-        try {
-            String[] points = toParse.split(";");
-            double x1 = Double.parseDouble(points[0].split(",")[0]);
-            double y1 = Double.parseDouble(points[0].split(",")[1]);
-            double x2 = Double.parseDouble(points[1].split(",")[0]);
-            double y2 = Double.parseDouble(points[1].split(",")[1]);
-            double width = BigDecimal.valueOf(x2).subtract(BigDecimal.valueOf(x1)).doubleValue();
-            double height = BigDecimal.valueOf(y2).subtract(BigDecimal.valueOf(y1)).doubleValue();
-            return new Rectangle2D(x1, y1, width, height);
-        } catch (Exception ex) {
-            return null;
-        }
-        
-    }
 }
