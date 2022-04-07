@@ -10,12 +10,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
@@ -109,6 +110,7 @@ public class MainController {
         scatterSeries1.getData().clear();
         scatterSeries2.getData().clear();
         accuracySeries.getData().clear();
+        pointCharts_container.getChildren().clear();
 
         InputDataWrapper dataWrap = validateAndParseDataFromFields();
         if (dataWrap.getErrorMessages().size() > 0) {
@@ -125,7 +127,9 @@ public class MainController {
             BigDecimal areaValue = areaFinder.findAreaValue(dataWrap.getAmountOfPoints());
             areasList.add(areaValue);
 
-            this.showDataOnPointsChart(areaFinder.getLastRunGeneratedPoints());
+            List<StatePoint2D> unmodifPointsList = areaFinder.getLastRunGeneratedPoints();
+            this.showDataOnPointsChart(unmodifPointsList);
+            this.drawExperimentPointsChart(i + 1, unmodifPointsList);
 
             double currAvgAreaValue = calcAvgValueInList(i + 1, areasList, 3);
             this.showDataOnLinesChart(i + 1, currAvgAreaValue);
@@ -138,6 +142,35 @@ public class MainController {
     @FXML
     public void draw_functions_method(ActionEvent event) {
         
+    }
+
+    public void drawExperimentPointsChart(int number, List<StatePoint2D> statedPoints) {
+        XYChart.Series<Number,Number> inOuterFigurePoints = new XYChart.Series<>();
+        XYChart.Series<Number,Number> inInnerFigurePoints = new XYChart.Series<>();
+
+        for (StatePoint2D statePoint : statedPoints) {
+            XYChart.Data<Number, Number> point = new XYChart.Data<>(statePoint.getPoint().getX(), statePoint.getPoint().getY());
+            if (statePoint.getState() == true) {
+                inInnerFigurePoints.getData().add(point);
+            } else {
+                inOuterFigurePoints.getData().add(point);
+            }
+        }
+        
+        final NumberAxis xAxis = new NumberAxis();
+        final NumberAxis yAxis = new NumberAxis();        
+        ScatterChart<Number,Number> scatChart = new ScatterChart<>(xAxis, yAxis);
+        scatChart.setOnMouseClicked(event -> this.openChartInOwnWindow());
+        scatChart.setPrefSize(300, 300);
+        scatChart.legendVisibleProperty().set(false);
+        scatChart.getData().addAll(inInnerFigurePoints, inOuterFigurePoints);
+        scatChart.setTitle("Эксперимент №" + number);
+
+        pointCharts_container.getChildren().add(scatChart);
+    }
+
+    private void openChartInOwnWindow() {
+        this.showErrorAlert("Functionality of opening charts is not being ready yet");
     }
 
     private void showErrorAlert(String text) {
@@ -249,7 +282,11 @@ public class MainController {
         this.prepareTables();
     }
 
+    /**
+     * TODO: добавить создание осей и графика точек с 0, чтобы нормально отображалась легенда
+     */
     private void prepareCharts() {
+
         // Создание наборов значений для графиков
         scatterSeries1 = new XYChart.Series<Number, Number>();
         scatterSeries2 = new XYChart.Series<Number, Number>();
