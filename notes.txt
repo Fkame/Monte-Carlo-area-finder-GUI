@@ -6,6 +6,7 @@ https://betacode.net/11529/javafx-alert-dialog
 
 -- Руководство JavaFX TreeTableView
 https://betacode.net/11149/javafx-treetableview
+https://examples.javacodegeeks.com/desktop-java/javafx/javafx-treetableview-example/
 
 -- Руководство JavaFX BarChart и StackedBarChart 
 https://betacode.net/11107/javafx-barchart
@@ -39,3 +40,6 @@ https://stackoverflow.com/questions/44956955/javafx-use-chart-legend-to-toggle-s
 
 -- Reset scatter chart's node color in a mouse-clicked event
 https://stackoverflow.com/questions/64040215/reset-scatter-charts-node-color-in-a-mouse-clicked-event
+
+-- JavaFX word-wrap on a Treeview, TreeItem/TreeCell
+https://stackoverflow.com/questions/39712661/javafx-word-wrap-on-a-treeview-treeitem-treecell

@@ -12,6 +12,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -191,7 +192,7 @@ public class MainController {
             generalTable_itemRoot.getChildren().add(eItem);
         }
 
-        data_table_inGeneral.refresh();
+        data_table_inGeneral.autosize();
     }
 
     private double calcAvgValueInList(int limitNumber, List<BigDecimal> values, int accuracy) throws IllegalArgumentException {
