@@ -7,7 +7,15 @@ import javafx.geometry.Point2D;
  * площадь которой нужно найти.
  */
 public class StatePoint2D {
+
+    /**
+     * Точка на плоскости
+     */
     private Point2D point;
+
+    /**
+     * Попадает ли она в пределы фигуры, площадь которой нужно найти.
+     */
     private boolean isInInnerArea;
 
     public StatePoint2D(Point2D point, boolean isInInnerArea) {

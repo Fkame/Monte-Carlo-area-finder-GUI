@@ -99,8 +99,6 @@ public class MainController {
 
     @FXML
     private FlowPane pointCharts_container;
-    
-    private int amountOfRuns = 1;
 
     // JavaFX он нужен пустой
     public MainController() {}
@@ -120,6 +118,8 @@ public class MainController {
         MonteCarloAreaMethod areaFinder = new MonteCarloAreaMethod(dataWrap.getBigArea(), new Random());
 
         ArrayList<BigDecimal> areasList = new ArrayList<>();
+        ArrayList<Double> currAvgAreasValuesList = new ArrayList<>();
+
         for (int i = 0; i < dataWrap.getAmountOfExperiments(); i++) {
             BigDecimal areaValue = areaFinder.findAreaValue(dataWrap.getAmountOfPoints());
             areasList.add(areaValue);
@@ -128,11 +128,10 @@ public class MainController {
 
             double currAvgAreaValue = calcAvgValueInList(i + 1, areasList, 3);
             this.showDataOnLinesChart(i + 1, currAvgAreaValue);
+
+            currAvgAreasValuesList.add(currAvgAreaValue);
         }
-        // Итоговая статистика
-        double currAvgAreaValue = calcAvgValueInList(areasList.size(), areasList, 3);
-        this.showDataOnDataTable(amountOfRuns, dataWrap, areasList, currAvgAreaValue);
-        this.amountOfRuns += 1;
+        this.showDataOnDataTable(dataWrap, areasList, currAvgAreasValuesList);
     }
 
     @FXML
@@ -174,16 +173,20 @@ public class MainController {
     /** 
      * TODO: Сделать вывод текущего среднего значения для каждого эксперимента, чтобы было видно, как оно меняется.
     */
-    private void showDataOnDataTable(int amountOfRuns, InputDataWrapper inputDataWrapper, List<BigDecimal> areasList, double avgValue) {
+    private void showDataOnDataTable(InputDataWrapper inputDataWrapper, List<BigDecimal> areasList, List<Double> avgValuesList) {
+        Double lastAvgValue = avgValuesList.get(avgValuesList.size() - 1);
+        int amountOfExperiments = areasList.size();
 
-        ExperimentsWrapper rootValue = new ExperimentsWrapper("Список экспериментов", inputDataWrapper.getAmountOfExperiments(), avgValue, "");
+        ExperimentsWrapper rootValue = new ExperimentsWrapper("Список экспериментов", amountOfExperiments, null, lastAvgValue, "");
         TreeItem<ExperimentsWrapper> generalTable_itemRoot = new TreeItem<ExperimentsWrapper>(rootValue);
         data_table_inGeneral.setRoot(generalTable_itemRoot);
 
-        for (int i = 0; i < areasList.size(); i++) {
+        int pointAmount = inputDataWrapper.getAmountOfPoints();
+        for (int i = 0; i < amountOfExperiments; i++) {
             double areaValue = areasList.get(i).doubleValue();
+            Double currAvgAreaValue = avgValuesList.get(i);
             ExperimentsWrapper eInfo = 
-                        new ExperimentsWrapper("Эксперимент №" + (i + 1), inputDataWrapper.getAmountOfPoints(), areaValue, "");
+                        new ExperimentsWrapper("Эксперимент №" + (i + 1), pointAmount, areaValue, currAvgAreaValue, "");
             TreeItem<ExperimentsWrapper> eItem = new TreeItem<>(eInfo);
             generalTable_itemRoot.getChildren().add(eItem);
         }
@@ -276,14 +279,16 @@ public class MainController {
         TreeTableColumn<ExperimentsWrapper, String> expNameCol = new TreeTableColumn<ExperimentsWrapper, String>("Наименование");
         TreeTableColumn<ExperimentsWrapper, Integer> expElemsNumCol = new TreeTableColumn<ExperimentsWrapper, Integer>("Кол-во элементов");
         TreeTableColumn<ExperimentsWrapper, Double> expAreaValueCol = new TreeTableColumn<ExperimentsWrapper, Double>("Значение площади");
-        //TreeTableColumn<ExperimentsWrapper, String> expAdditionalCol = new TreeTableColumn<ExperimentsWrapper, String>("Доп.информация");
+        TreeTableColumn<ExperimentsWrapper, Double> expAvgAreaValueCol = new TreeTableColumn<ExperimentsWrapper, Double>("AVG площадь");
+        TreeTableColumn<ExperimentsWrapper, String> expAdditionalCol = new TreeTableColumn<ExperimentsWrapper, String>("Доп.информация");
 
         // Указываем, какую переменную из класса нужно получить с помощью соответствующего геттера и вставить в ячейку соотвествующей колонки
         expNameCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, String>("name"));
         expElemsNumCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, Integer>("amountOfElements"));
         expAreaValueCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, Double>("areaValue"));
-        //expAdditionalCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, String>("additionalInfo"));
+        expAvgAreaValueCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, Double>("avgAreaValue"));
+        expAdditionalCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, String>("additionalInfo"));
 
-        data_table_inGeneral.getColumns().addAll(expNameCol, expElemsNumCol, expAreaValueCol);
+        data_table_inGeneral.getColumns().addAll(expNameCol, expElemsNumCol, expAreaValueCol, expAvgAreaValueCol, expAdditionalCol);
     }
 }
