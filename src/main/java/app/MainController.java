@@ -15,9 +15,12 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableView;
+import javafx.scene.control.cell.TreeItemPropertyValueFactory;
+import javafx.scene.layout.FlowPane;
 
 public class MainController {
 
@@ -55,23 +58,50 @@ public class MainController {
     /**
      * График из точек, на котором отображаются точки во внешней фигуре и попавшие во внутреннюю фигуру
      */
-    private ScatterChart<Number, Number> points_chart;
+    private ScatterChart<Number, Number> all_points_chart;
 
     /**
-     * Набор точек, которые попали во внутреннюю фигуру
+     * Набор точек, которые попали во внутреннюю фигуру на графике {@link MainController#all_points_chart}
      */
     private XYChart.Series<Number, Number> scatterSeries1;
     /**
-     * Набор точек, которые не попали во внутреннюю фигуру
+     * Набор точек, которые НЕ попали во внутреннюю фигуру на графике {@link MainController#all_points_chart}
      */
     private XYChart.Series<Number, Number> scatterSeries2;
 
     @FXML
+    /**
+     * Среднее значение площади в зависимости от числа экспериментов
+     */
     private LineChart<Number, Number> accuracy_chart;
-    private  XYChart.Series<Number, Number> lineSeries;
+
+    /**
+     * Набор точек 
+     */
+    private  XYChart.Series<Number, Number> accuracySeries;
 
     @FXML
-    private TableView<TableColumn<String, String>> data_table;
+    private TreeTableView<ExperimentsWrapper> data_table_inGeneral;
+    private TreeItem<ExperimentsWrapper> generalTable_itemRoot;
+
+    @FXML 
+    private LineChart<Number, Number> functions_chart;
+    
+    @FXML
+    private TextField minX_field;
+    @FXML
+    private TextField maxX_field;
+    @FXML
+    private TextField minY_field;
+    @FXML
+    private TextField maxY_field;
+    @FXML
+    private TextField stepValue_field;
+
+    @FXML
+    private FlowPane pointCharts_container;
+    
+    private int amountOfRuns = 1;
 
     // JavaFX он нужен пустой
     public MainController() {}
@@ -80,7 +110,7 @@ public class MainController {
     private void startMethod(ActionEvent event) {
         scatterSeries1.getData().clear();
         scatterSeries2.getData().clear();
-        lineSeries.getData().clear();
+        accuracySeries.getData().clear();
 
         InputDataWrapper dataWrap = validateAndParseDataFromFields();
         if (dataWrap.getErrorMessages().size() > 0) {
@@ -95,9 +125,18 @@ public class MainController {
             BigDecimal areaValue = areaFinder.findAreaValue(dataWrap.getAmountOfPoints());
             areasList.add(areaValue);
             this.showDataOnPointsChart(areaFinder.getLastRunGeneratedPoints());
-            this.showDataOnLinesChart(i + 1, areasList);
-            this.showDataOnDataTable();
+            double currAvgAreaValue = calcAvgValueInList(i + 1, areasList, 3);
+            this.showDataOnLinesChart(i + 1, currAvgAreaValue);
         }
+        // Итоговая статистика
+        double currAvgAreaValue = calcAvgValueInList(areasList.size(), areasList, 3);
+        this.showDataOnDataTable(amountOfRuns, dataWrap, areasList, currAvgAreaValue);
+        this.amountOfRuns += 1;
+    }
+
+    @FXML
+    public void draw_functions_method(ActionEvent event) {
+        
     }
 
     private void showErrorAlert(String text) {
@@ -126,19 +165,42 @@ public class MainController {
         }
     }
 
-    private void showDataOnLinesChart(int numOfExperiment, List<BigDecimal> values) {
-        BigDecimal numLimit = BigDecimal.valueOf(numOfExperiment);
+    private void showDataOnLinesChart(int numOfExperiment, double currAvgAreaValue) {       
+        XYChart.Data<Number, Number> currAvgValuePoint = new XYChart.Data<Number, Number>(numOfExperiment, currAvgAreaValue);
+        this.accuracySeries.getData().add(currAvgValuePoint);
+    }
+
+    private void showDataOnDataTable(int amountOfRuns, InputDataWrapper inputDataWrapper, List<BigDecimal> areasList, double avgValue) {
+        ExperimentsWrapper runInfo = 
+                    new ExperimentsWrapper("Прогон №" + amountOfRuns, inputDataWrapper.getAmountOfExperiments(), avgValue, "");
+        TreeItem<ExperimentsWrapper> runItem = new TreeItem<>(runInfo);
+
+        // Добавление в группировочный элемент данных об экспериментах
+        for (int i = 0; i < areasList.size(); i++) {
+            double areaValue = areasList.get(i).doubleValue();
+            ExperimentsWrapper eInfo = 
+                        new ExperimentsWrapper("Эксперимент №" + (i + 1), inputDataWrapper.getAmountOfPoints(), areaValue, "");
+            TreeItem<ExperimentsWrapper> eItem = new TreeItem<>(eInfo);
+            runItem.getChildren().add(eItem);
+        }
+
+        this.generalTable_itemRoot.getChildren().add(runItem);
+
+        // Увеличение числа вложенных прогонов для корневого элемента
+        int oldValue = generalTable_itemRoot.getValue().getAmountOfElements();
+        generalTable_itemRoot.getValue().setAmountOfElements(oldValue + 1);
+    }
+
+    private double calcAvgValueInList(int limitNumber, List<BigDecimal> values, int accuracy) throws IllegalArgumentException {
+        BigDecimal numLimit = BigDecimal.valueOf(limitNumber);
+        if (limitNumber <= 0) throw new IllegalArgumentException("limitNumber <= 0!!!");
+        if (limitNumber > values.size()) throw new IllegalArgumentException("limit number > size of values list!!!");
         BigDecimal sumValue = BigDecimal.ZERO;
         for (int i = 0; i < numLimit.intValue(); i++) {
             sumValue = sumValue.add(values.get(i));
         }
-        double currAvgAreaValue = sumValue.divide(numLimit, 3, RoundingMode.CEILING).doubleValue();            
-        XYChart.Data<Number, Number> currAvgValuePoint = new XYChart.Data<Number, Number>(numLimit.intValue(), currAvgAreaValue);
-        this.lineSeries.getData().add(currAvgValuePoint);
-    }
-
-    private void showDataOnDataTable() {
-
+        double currAvgAreaValue = sumValue.divide(numLimit, accuracy, RoundingMode.CEILING).doubleValue(); 
+        return currAvgAreaValue;  
     }
 
     private InputDataWrapper validateAndParseDataFromFields() {
@@ -178,25 +240,48 @@ public class MainController {
         return dataWrap;
     }
 
-    public void prepareSeriesAndCharts() {
+    public void prepareChartsAndTables() {
+        // Создание наборов значений для графиков
         scatterSeries1 = new XYChart.Series<Number, Number>();
         scatterSeries2 = new XYChart.Series<Number, Number>();
-        lineSeries = new XYChart.Series<Number, Number>();
+        accuracySeries = new XYChart.Series<Number, Number>();
 
-        points_chart.getData().clear();
-        points_chart.getData().addAll(scatterSeries1, scatterSeries2);
+        all_points_chart.getData().clear();
+        all_points_chart.getData().addAll(scatterSeries1, scatterSeries2);
 
         accuracy_chart.getData().clear();
-        accuracy_chart.getData().add(lineSeries);
+        accuracy_chart.getData().add(accuracySeries);
 
-        points_chart.setTitle("Сгенерированные точки для поиска площади внутренней фигуры");
+        // Названия графиков
+        all_points_chart.setTitle("Сгенерированные точки для поиска площади внутренней фигуры");
         accuracy_chart.setTitle("Среднее значение площади экспериментов от 1 до текущего");
 
+        // Подписи осей
         accuracy_chart.getXAxis().setLabel("Номер эксперимента");
         accuracy_chart.getYAxis().setLabel("Значение площади фигуры");
 
+        // Наименования наборов значений для подписей в легенде графика
         scatterSeries1.setName("Точки во внутренней фигуре");
         scatterSeries2.setName("Точки во внешней фигуре");
-        lineSeries.setName("AVG площади с учётом предыдущих экспериментов");
+        accuracySeries.setName("AVG площади с учётом предыдущих экспериментов");
+
+        // Создание колонок
+        TreeTableColumn<ExperimentsWrapper, String> expNameCol = new TreeTableColumn<ExperimentsWrapper, String>("Наименование");
+        TreeTableColumn<ExperimentsWrapper, Integer> expElemsNumCol = new TreeTableColumn<ExperimentsWrapper, Integer>("Кол-во элементов");
+        TreeTableColumn<ExperimentsWrapper, Double> expAreaValueCol = new TreeTableColumn<ExperimentsWrapper, Double>("Значение площади");
+        TreeTableColumn<ExperimentsWrapper, String> expAdditionalCol = new TreeTableColumn<ExperimentsWrapper, String>("Доп.информация");
+
+        // Указываем, какую переменную из класса нужно получить с помощью соответствующего геттера и вставить в ячейку соотвествующей колонки
+        expNameCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, String>("name"));
+        expElemsNumCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, Integer>("amountOfElements"));
+        expAreaValueCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, Double>("areaValue"));
+        expAdditionalCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, String>("additionalInfo"));
+
+        data_table_inGeneral.getColumns().addAll(expNameCol, expElemsNumCol, expAreaValueCol, expAdditionalCol);
+
+        // Создание корневого элемента (может быть только 1, все другие элементы находятся в нём)
+        ExperimentsWrapper rootValue = new ExperimentsWrapper("Список экспериментов", 0, 0, "");
+        this.generalTable_itemRoot = new TreeItem<ExperimentsWrapper>(rootValue);
+        data_table_inGeneral.setRoot(generalTable_itemRoot);
     }
 }

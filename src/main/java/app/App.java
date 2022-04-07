@@ -19,7 +19,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         scene = new Scene(loadFXML("main_scene"));
-        controller.prepareSeriesAndCharts();
+        controller.prepareChartsAndTables();
 
         stage.setScene(scene);
         stage.centerOnScreen();

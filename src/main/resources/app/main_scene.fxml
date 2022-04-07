@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.ScatterChart?>
@@ -12,17 +11,16 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.control.TreeTableColumn?>
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
 
 <SplitPane dividerPositions="0.32965931863727455" prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.MainController">
    <items>
@@ -135,7 +133,7 @@
                <content>
                   <SplitPane dividerPositions="0.5" orientation="VERTICAL">
                      <items>
-                        <ScatterChart fx:id="points_chart">
+                        <ScatterChart fx:id="all_points_chart">
                           <xAxis>
                             <NumberAxis side="BOTTOM" />
                           </xAxis>
@@ -143,7 +141,7 @@
                             <NumberAxis side="LEFT" />
                           </yAxis>
                         </ScatterChart>
-                        <SplitPane dividerPositions="0.5540540540540541">
+                        <SplitPane dividerPositions="0.5255255255255256">
                            <items>
                               <LineChart fx:id="accuracy_chart" prefHeight="312.0" prefWidth="278.0">
                                 <xAxis>
@@ -153,12 +151,7 @@
                                   <NumberAxis fx:id="line_chart" side="LEFT" />
                                 </yAxis>
                               </LineChart>
-                              <TreeTableView prefHeight="200.0" prefWidth="200.0">
-                                <columns>
-                                  <TreeTableColumn prefWidth="75.0" text="C1" />
-                                  <TreeTableColumn prefWidth="75.0" text="C2" />
-                                </columns>
-                              </TreeTableView>
+                              <TreeTableView fx:id="data_table_inGeneral" prefHeight="200.0" prefWidth="200.0" />
                            </items>
                         </SplitPane>
                      </items>
@@ -169,7 +162,7 @@
               <content>
                   <BorderPane prefHeight="200.0" prefWidth="200.0">
                      <center>
-                        <LineChart BorderPane.alignment="CENTER">
+                        <LineChart fx:id="functions_chart" BorderPane.alignment="CENTER">
                           <xAxis>
                             <NumberAxis side="BOTTOM" />
                           </xAxis>
@@ -193,32 +186,32 @@
                                     <RowConstraints maxHeight="201.0" minHeight="10.0" prefHeight="47.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
-                                    <Button defaultButton="true" mnemonicParsing="false" prefHeight="30.0" prefWidth="399.0" text="Построить графики" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
+                                    <Button fx:id="btn_draw_functions" defaultButton="true" mnemonicParsing="false" onAction="#draw_functions_method" prefHeight="30.0" prefWidth="399.0" text="Построить графики" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
-                                    <TextField prefHeight="31.0" prefWidth="279.0" promptText="min X">
+                                    <TextField fx:id="minX_field" prefHeight="31.0" prefWidth="279.0" promptText="min X">
                                        <font>
                                           <Font size="15.0" />
                                        </font>
                                     </TextField>
-                                    <TextField promptText="min Y" GridPane.rowIndex="1">
+                                    <TextField fx:id="minY_field" promptText="min Y" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="15.0" />
                                        </font>
                                     </TextField>
-                                    <TextField promptText="max X" GridPane.columnIndex="1">
+                                    <TextField fx:id="maxX_field" promptText="max X" GridPane.columnIndex="1">
                                        <font>
                                           <Font size="15.0" />
                                        </font>
                                     </TextField>
-                                    <TextField promptText="max Y" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                    <TextField fx:id="maxY_field" promptText="max Y" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="15.0" />
                                        </font>
                                     </TextField>
-                                    <TextField layoutX="176.0" layoutY="56.0" promptText="step on X" GridPane.columnIndex="2">
+                                    <TextField fx:id="stepValue_field" layoutX="176.0" layoutY="56.0" promptText="step on X" GridPane.columnIndex="2">
                                        <font>
                                           <Font size="15.0" />
                                        </font>
@@ -232,6 +225,11 @@
               </content>
             </Tab>
             <Tab text="Графики точек экспериментов">
+               <content>
+                  <FlowPane fx:id="pointCharts_container" prefHeight="200.0" prefWidth="200.0" />
+               </content>
+            </Tab>
+            <Tab text="Таблица с экспериментами">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
               </content>
