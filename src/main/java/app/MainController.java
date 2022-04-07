@@ -189,6 +189,7 @@ public class MainController {
         // Увеличение числа вложенных прогонов для корневого элемента
         int oldValue = generalTable_itemRoot.getValue().getAmountOfElements();
         generalTable_itemRoot.getValue().setAmountOfElements(oldValue + 1);
+        data_table_inGeneral.refresh();
     }
 
     private double calcAvgValueInList(int limitNumber, List<BigDecimal> values, int accuracy) throws IllegalArgumentException {
