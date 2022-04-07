@@ -82,7 +82,6 @@ public class MainController {
 
     @FXML
     private TreeTableView<ExperimentsWrapper> data_table_inGeneral;
-    private TreeItem<ExperimentsWrapper> generalTable_itemRoot;
 
     @FXML 
     private LineChart<Number, Number> functions_chart;
@@ -124,7 +123,9 @@ public class MainController {
         for (int i = 0; i < dataWrap.getAmountOfExperiments(); i++) {
             BigDecimal areaValue = areaFinder.findAreaValue(dataWrap.getAmountOfPoints());
             areasList.add(areaValue);
+
             this.showDataOnPointsChart(areaFinder.getLastRunGeneratedPoints());
+
             double currAvgAreaValue = calcAvgValueInList(i + 1, areasList, 3);
             this.showDataOnLinesChart(i + 1, currAvgAreaValue);
         }
@@ -170,25 +171,23 @@ public class MainController {
         this.accuracySeries.getData().add(currAvgValuePoint);
     }
 
+    /** 
+     * TODO: Сделать вывод текущего среднего значения для каждого эксперимента, чтобы было видно, как оно меняется.
+    */
     private void showDataOnDataTable(int amountOfRuns, InputDataWrapper inputDataWrapper, List<BigDecimal> areasList, double avgValue) {
-        ExperimentsWrapper runInfo = 
-                    new ExperimentsWrapper("Прогон №" + amountOfRuns, inputDataWrapper.getAmountOfExperiments(), avgValue, "");
-        TreeItem<ExperimentsWrapper> runItem = new TreeItem<>(runInfo);
 
-        // Добавление в группировочный элемент данных об экспериментах
+        ExperimentsWrapper rootValue = new ExperimentsWrapper("Список экспериментов", inputDataWrapper.getAmountOfExperiments(), avgValue, "");
+        TreeItem<ExperimentsWrapper> generalTable_itemRoot = new TreeItem<ExperimentsWrapper>(rootValue);
+        data_table_inGeneral.setRoot(generalTable_itemRoot);
+
         for (int i = 0; i < areasList.size(); i++) {
             double areaValue = areasList.get(i).doubleValue();
             ExperimentsWrapper eInfo = 
                         new ExperimentsWrapper("Эксперимент №" + (i + 1), inputDataWrapper.getAmountOfPoints(), areaValue, "");
             TreeItem<ExperimentsWrapper> eItem = new TreeItem<>(eInfo);
-            runItem.getChildren().add(eItem);
+            generalTable_itemRoot.getChildren().add(eItem);
         }
 
-        this.generalTable_itemRoot.getChildren().add(runItem);
-
-        // Увеличение числа вложенных прогонов для корневого элемента
-        int oldValue = generalTable_itemRoot.getValue().getAmountOfElements();
-        generalTable_itemRoot.getValue().setAmountOfElements(oldValue + 1);
         data_table_inGeneral.refresh();
     }
 
@@ -241,7 +240,12 @@ public class MainController {
         return dataWrap;
     }
 
-    public void prepareChartsAndTables() {
+    public void prepareAllComponents() {
+        this.prepareCharts();
+        this.prepareTables();
+    }
+
+    private void prepareCharts() {
         // Создание наборов значений для графиков
         scatterSeries1 = new XYChart.Series<Number, Number>();
         scatterSeries2 = new XYChart.Series<Number, Number>();
@@ -265,24 +269,21 @@ public class MainController {
         scatterSeries1.setName("Точки во внутренней фигуре");
         scatterSeries2.setName("Точки во внешней фигуре");
         accuracySeries.setName("AVG площади с учётом предыдущих экспериментов");
+    }
 
+    private void prepareTables() {
         // Создание колонок
         TreeTableColumn<ExperimentsWrapper, String> expNameCol = new TreeTableColumn<ExperimentsWrapper, String>("Наименование");
         TreeTableColumn<ExperimentsWrapper, Integer> expElemsNumCol = new TreeTableColumn<ExperimentsWrapper, Integer>("Кол-во элементов");
         TreeTableColumn<ExperimentsWrapper, Double> expAreaValueCol = new TreeTableColumn<ExperimentsWrapper, Double>("Значение площади");
-        TreeTableColumn<ExperimentsWrapper, String> expAdditionalCol = new TreeTableColumn<ExperimentsWrapper, String>("Доп.информация");
+        //TreeTableColumn<ExperimentsWrapper, String> expAdditionalCol = new TreeTableColumn<ExperimentsWrapper, String>("Доп.информация");
 
         // Указываем, какую переменную из класса нужно получить с помощью соответствующего геттера и вставить в ячейку соотвествующей колонки
         expNameCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, String>("name"));
         expElemsNumCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, Integer>("amountOfElements"));
         expAreaValueCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, Double>("areaValue"));
-        expAdditionalCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, String>("additionalInfo"));
+        //expAdditionalCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, String>("additionalInfo"));
 
-        data_table_inGeneral.getColumns().addAll(expNameCol, expElemsNumCol, expAreaValueCol, expAdditionalCol);
-
-        // Создание корневого элемента (может быть только 1, все другие элементы находятся в нём)
-        ExperimentsWrapper rootValue = new ExperimentsWrapper("Список экспериментов", 0, 0, "");
-        this.generalTable_itemRoot = new TreeItem<ExperimentsWrapper>(rootValue);
-        data_table_inGeneral.setRoot(generalTable_itemRoot);
+        data_table_inGeneral.getColumns().addAll(expNameCol, expElemsNumCol, expAreaValueCol);
     }
 }
