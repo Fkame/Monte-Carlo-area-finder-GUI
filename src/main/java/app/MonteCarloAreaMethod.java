@@ -1,6 +1,7 @@
 package app;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -67,7 +68,7 @@ public class MonteCarloAreaMethod {
         int pointsInInnerArea = getAmountOfPointsInInnerArea(this.lastRunGeneratedPoints);
         BigDecimal areaValue = BigDecimal.valueOf(pointsInInnerArea)
                             .multiply(this.getBigAreaValue())
-                            .divide(BigDecimal.valueOf(amountOfPointsToGenerate));
+                            .divide(BigDecimal.valueOf(amountOfPointsToGenerate), 3, RoundingMode.CEILING);
         return areaValue;
 
     }

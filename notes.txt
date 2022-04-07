@@ -43,3 +43,18 @@ https://stackoverflow.com/questions/64040215/reset-scatter-charts-node-color-in-
 
 -- JavaFX word-wrap on a Treeview, TreeItem/TreeCell
 https://stackoverflow.com/questions/39712661/javafx-word-wrap-on-a-treeview-treeitem-treecell
+
+-- Fit FlowPane into ScrollPane
+https://stackoverflow.com/questions/24136348/fit-flowpane-into-scrollpane
+
+-- How to change point size in Scatter Chart?
+https://stackoverflow.com/questions/39947456/how-to-change-point-size-in-scatter-chart
+
+-- JavaFX: How to set a TiteledPane selected/opened by default
+https://stackoverflow.com/questions/33194517/javafx-how-to-set-a-titeledpane-selected-opened-by-default
+
+-- Javafx Accordion
+https://betacode.net/11055/javafx-accordion
+
+-- JavaFX Tip 22: Autosize (Tree) Table Columns
+https://dlsc.com/2015/12/10/javafx-tip-22-autosize-tree-table-columns/

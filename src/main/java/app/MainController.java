@@ -8,7 +8,10 @@ import java.util.Random;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
+import javafx.scene.chart.Chart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
@@ -16,13 +19,14 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.stage.Stage;
 
 public class MainController {
 
@@ -156,21 +160,45 @@ public class MainController {
                 inOuterFigurePoints.getData().add(point);
             }
         }
-        
-        final NumberAxis xAxis = new NumberAxis();
-        final NumberAxis yAxis = new NumberAxis();        
-        ScatterChart<Number,Number> scatChart = new ScatterChart<>(xAxis, yAxis);
-        scatChart.setOnMouseClicked(event -> this.openChartInOwnWindow());
+         
+        ScatterChart<Number,Number> scatChart = new ScatterChart<>(new NumberAxis(), new NumberAxis());
         scatChart.setPrefSize(300, 300);
         scatChart.legendVisibleProperty().set(false);
         scatChart.getData().addAll(inInnerFigurePoints, inOuterFigurePoints);
         scatChart.setTitle("Эксперимент №" + number);
+        scatChart.setOnMouseClicked(event -> {
+            XYChart.Series<Number, Number> ser1 = this.copySeriesData(inInnerFigurePoints);
+            XYChart.Series<Number, Number> ser2 = this.copySeriesData(inOuterFigurePoints);
+            this.openChartInOwnWindow(scatChart.getTitle(), all_points_chart.getWidth(), all_points_chart.getHeight(), ser1, ser2);
+        });
 
         pointCharts_container.getChildren().add(scatChart);
     }
 
-    private void openChartInOwnWindow() {
-        this.showErrorAlert("Functionality of opening charts is not being ready yet");
+    private XYChart.Series<Number, Number> copySeriesData(XYChart.Series<Number, Number> seriesToCopy) {
+        XYChart.Series<Number, Number> copy = new XYChart.Series<>();
+        for (XYChart.Data<Number, Number> dataToCopy : seriesToCopy.getData()) {
+            copy.getData().add(new XYChart.Data<Number, Number>(dataToCopy.getXValue(), dataToCopy.getYValue()));
+        }
+        return copy;
+    }
+    
+    /**
+     * TODO: сделать создание копии графика. Добавить ограничитель на создание окон через события и UserData свойство класса
+     */
+    private void openChartInOwnWindow(String title, double width, double height, XYChart.Series<Number, Number> ... series) {
+        ScatterChart<Number, Number> scatChart = new ScatterChart<>(new NumberAxis(), new NumberAxis());
+        scatChart.setTitle(title);
+        scatChart.legendVisibleProperty().set(false);
+        scatChart.getData().addAll(series);
+
+        BorderPane container = new BorderPane(scatChart);
+        Scene chartScene = new Scene(container, width, height);
+        Stage chartStage = new Stage();
+        chartStage.setScene(chartScene);
+        chartStage.setTitle(title);
+        chartStage.centerOnScreen();
+        chartStage.show();
     }
 
     private void showErrorAlert(String text) {
@@ -315,10 +343,15 @@ public class MainController {
     private void prepareTables() {
         // Создание колонок
         TreeTableColumn<ExperimentsWrapper, String> expNameCol = new TreeTableColumn<ExperimentsWrapper, String>("Наименование");
+        expNameCol.prefWidthProperty().set(200);
         TreeTableColumn<ExperimentsWrapper, Integer> expElemsNumCol = new TreeTableColumn<ExperimentsWrapper, Integer>("Кол-во элементов");
+        expElemsNumCol.prefWidthProperty().set(100);
         TreeTableColumn<ExperimentsWrapper, Double> expAreaValueCol = new TreeTableColumn<ExperimentsWrapper, Double>("Значение площади");
+        expAreaValueCol.prefWidthProperty().set(120);
         TreeTableColumn<ExperimentsWrapper, Double> expAvgAreaValueCol = new TreeTableColumn<ExperimentsWrapper, Double>("AVG площадь");
+        expAvgAreaValueCol.prefWidthProperty().set(100);
         TreeTableColumn<ExperimentsWrapper, String> expAdditionalCol = new TreeTableColumn<ExperimentsWrapper, String>("Доп.информация");
+        expAdditionalCol.prefWidthProperty().set(200);
 
         // Указываем, какую переменную из класса нужно получить с помощью соответствующего геттера и вставить в ячейку соотвествующей колонки
         expNameCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, String>("name"));
