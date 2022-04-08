@@ -1,4 +1,4 @@
-package app;
+package app.monte_carlo_method;
 
 import javafx.geometry.Point2D;
 

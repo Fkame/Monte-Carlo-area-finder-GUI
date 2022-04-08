@@ -1,4 +1,4 @@
-package app;
+package app.monte_carlo_method;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -8,6 +8,7 @@ import java.util.Random;
 
 import org.junit.Test;
 
+import app.monte_carlo_method.MonteCarloAreaMethod;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 

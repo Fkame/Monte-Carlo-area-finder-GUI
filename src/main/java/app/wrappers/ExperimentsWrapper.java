@@ -1,14 +1,16 @@
-package app;
+package app.wrappers;
 
 /**
  * Класс, который нужен для вывода данных в TreeTableView.
+ * <p>Пакет, в котором он находится, нужно отметить в {@code module-info.java} как {@code opens ... to javafx.base}, иначе
+ * будет ошибка {@code IllegalStateException}, когда Treetableview попробует извлечь значение из объекта с помощью рекурсии.
  */
 public class ExperimentsWrapper {
-    private String name;
-    private Integer amountOfElements;
-    private Double areaValue;
-    private Double avgAreaValue;
-    private String additionalInfo;
+    public String name;
+    public Integer amountOfElements;
+    public Double areaValue;
+    public Double avgAreaValue;
+    public String additionalInfo;
 
     public ExperimentsWrapper(String name, Integer amountOfElements, Double areaValue, Double avgAreaValue, String additionalInfo) {
         this.name = name;

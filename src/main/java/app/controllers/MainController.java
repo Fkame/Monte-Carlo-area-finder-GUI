@@ -1,4 +1,4 @@
-package app;
+package app.controllers;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -6,12 +6,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import app.controllers.support.SupplyMethods;
+import app.controllers.tab_rulers.FunctionDrawingTabRuler;
+import app.controllers.tab_rulers.GeneralStatTabRuler;
+import app.controllers.tab_rulers.ScatterChartsTabRuler;
+import app.monte_carlo_method.MonteCarloAreaMethod;
+import app.monte_carlo_method.StatePoint2D;
+import app.wrappers.ExperimentsWrapper;
+import app.wrappers.InputDataWrapper;
+import app.controllers.support.SupplyMethods;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.chart.Chart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
@@ -28,7 +36,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 
+/** 
+ * TODO: Сделать разбиение на 1 класс = 1 вкладка, сделать многопоточность, реализовать отрисовку функций перед моделированием, добавить чтение любых функций
+ */
 public class MainController {
+
+    private GeneralStatTabRuler generalStatTabRuler;
+    private ScatterChartsTabRuler scatterChartsTabRuler;
+    private FunctionDrawingTabRuler functionDrawingTabRuler;
 
     @FXML
     /**
@@ -69,11 +84,11 @@ public class MainController {
     /**
      * Набор точек, которые попали во внутреннюю фигуру на графике {@link MainController#all_points_chart}
      */
-    private XYChart.Series<Number, Number> scatterSeries1;
+    private XYChart.Series<Number, Number> innerPointsSeries;
     /**
      * Набор точек, которые НЕ попали во внутреннюю фигуру на графике {@link MainController#all_points_chart}
      */
-    private XYChart.Series<Number, Number> scatterSeries2;
+    private XYChart.Series<Number, Number> outerPointsSeries;
 
     @FXML
     /**
@@ -111,14 +126,13 @@ public class MainController {
 
     @FXML
     private void startMethod(ActionEvent event) {
-        scatterSeries1.getData().clear();
-        scatterSeries2.getData().clear();
-        accuracySeries.getData().clear();
-        pointCharts_container.getChildren().clear();
+        this.generalStatTabRuler.clearAllPointsChart();
+        this.generalStatTabRuler.clearAccuracyChart();
+        this.scatterChartsTabRuler.clearChartsContainer();;
 
         InputDataWrapper dataWrap = validateAndParseDataFromFields();
         if (dataWrap.getErrorMessages().size() > 0) {
-            this.showErrorAlert(String.join("\n", dataWrap.getErrorMessages()));
+            SupplyMethods.getErrorAlert(String.join("\n", dataWrap.getErrorMessages())).showAndWait();
             return;
         }
 
@@ -132,15 +146,15 @@ public class MainController {
             areasList.add(areaValue);
 
             List<StatePoint2D> unmodifPointsList = areaFinder.getLastRunGeneratedPoints();
-            this.showDataOnPointsChart(unmodifPointsList);
-            this.drawExperimentPointsChart(i + 1, unmodifPointsList);
+            this.generalStatTabRuler.showDataOnPointsChart(unmodifPointsList);
+            this.scatterChartsTabRuler.drawExperimentPointsChart(i + 1, unmodifPointsList);
 
-            double currAvgAreaValue = calcAvgValueInList(i + 1, areasList, 3);
-            this.showDataOnLinesChart(i + 1, currAvgAreaValue);
+            double currAvgAreaValue = SupplyMethods.calcAvgValueInList(i + 1, areasList, 3);
+            this.generalStatTabRuler.showDataOnLinesChart(i + 1, currAvgAreaValue);
 
             currAvgAreasValuesList.add(currAvgAreaValue);
         }
-        this.showDataOnDataTable(dataWrap, areasList, currAvgAreasValuesList);
+        this.generalStatTabRuler.showDataOnDataTable(dataWrap, areasList, currAvgAreasValuesList);
     }
 
     @FXML
@@ -148,124 +162,11 @@ public class MainController {
         
     }
 
-    public void drawExperimentPointsChart(int number, List<StatePoint2D> statedPoints) {
-        XYChart.Series<Number,Number> inOuterFigurePoints = new XYChart.Series<>();
-        XYChart.Series<Number,Number> inInnerFigurePoints = new XYChart.Series<>();
-
-        for (StatePoint2D statePoint : statedPoints) {
-            XYChart.Data<Number, Number> point = new XYChart.Data<>(statePoint.getPoint().getX(), statePoint.getPoint().getY());
-            if (statePoint.getState() == true) {
-                inInnerFigurePoints.getData().add(point);
-            } else {
-                inOuterFigurePoints.getData().add(point);
-            }
-        }
-         
-        ScatterChart<Number,Number> scatChart = new ScatterChart<>(new NumberAxis(), new NumberAxis());
-        scatChart.setPrefSize(300, 300);
-        scatChart.legendVisibleProperty().set(false);
-        scatChart.getData().addAll(inInnerFigurePoints, inOuterFigurePoints);
-        scatChart.setTitle("Эксперимент №" + number);
-        scatChart.setOnMouseClicked(event -> {
-            XYChart.Series<Number, Number> ser1 = this.copySeriesData(inInnerFigurePoints);
-            XYChart.Series<Number, Number> ser2 = this.copySeriesData(inOuterFigurePoints);
-            this.openChartInOwnWindow(scatChart.getTitle(), all_points_chart.getWidth(), all_points_chart.getHeight(), ser1, ser2);
-        });
-
-        pointCharts_container.getChildren().add(scatChart);
-    }
-
-    private XYChart.Series<Number, Number> copySeriesData(XYChart.Series<Number, Number> seriesToCopy) {
-        XYChart.Series<Number, Number> copy = new XYChart.Series<>();
-        for (XYChart.Data<Number, Number> dataToCopy : seriesToCopy.getData()) {
-            copy.getData().add(new XYChart.Data<Number, Number>(dataToCopy.getXValue(), dataToCopy.getYValue()));
-        }
-        return copy;
-    }
-    
-    /**
-     * TODO: сделать создание копии графика. Добавить ограничитель на создание окон через события и UserData свойство класса
-     */
-    private void openChartInOwnWindow(String title, double width, double height, XYChart.Series<Number, Number> ... series) {
-        ScatterChart<Number, Number> scatChart = new ScatterChart<>(new NumberAxis(), new NumberAxis());
-        scatChart.setTitle(title);
-        scatChart.legendVisibleProperty().set(false);
-        scatChart.getData().addAll(series);
-
-        BorderPane container = new BorderPane(scatChart);
-        Scene chartScene = new Scene(container, width, height);
-        Stage chartStage = new Stage();
-        chartStage.setScene(chartScene);
-        chartStage.setTitle(title);
-        chartStage.centerOnScreen();
-        chartStage.show();
-    }
-
-    private void showErrorAlert(String text) {
-        Alert alert = new Alert(AlertType.ERROR, text);
-        alert.setHeaderText(null);
-        alert.showAndWait();
-    }
-
     @FXML
     private void showHelp(ActionEvent event) {
         Alert alert = new Alert(AlertType.INFORMATION, "Button is in development proccess");
         alert.setHeaderText(null);
         alert.showAndWait();
-    }
-
-    private void showDataOnPointsChart(List<StatePoint2D> points) {
-        for (StatePoint2D point : points) {
-            XYChart.Data<Number, Number> pointToDraw = 
-                    new XYChart.Data<Number, Number>(point.getPoint().getX(), point.getPoint().getY());
-            if (point.getState() != true) {
-                scatterSeries2.getData().add(pointToDraw);
-            }
-            else {
-                scatterSeries1.getData().add(pointToDraw);
-            }
-        }
-    }
-
-    private void showDataOnLinesChart(int numOfExperiment, double currAvgAreaValue) {       
-        XYChart.Data<Number, Number> currAvgValuePoint = new XYChart.Data<Number, Number>(numOfExperiment, currAvgAreaValue);
-        this.accuracySeries.getData().add(currAvgValuePoint);
-    }
-
-    /** 
-     * TODO: Сделать вывод текущего среднего значения для каждого эксперимента, чтобы было видно, как оно меняется.
-    */
-    private void showDataOnDataTable(InputDataWrapper inputDataWrapper, List<BigDecimal> areasList, List<Double> avgValuesList) {
-        Double lastAvgValue = avgValuesList.get(avgValuesList.size() - 1);
-        int amountOfExperiments = areasList.size();
-
-        ExperimentsWrapper rootValue = new ExperimentsWrapper("Список экспериментов", amountOfExperiments, null, lastAvgValue, "");
-        TreeItem<ExperimentsWrapper> generalTable_itemRoot = new TreeItem<ExperimentsWrapper>(rootValue);
-        data_table_inGeneral.setRoot(generalTable_itemRoot);
-
-        int pointAmount = inputDataWrapper.getAmountOfPoints();
-        for (int i = 0; i < amountOfExperiments; i++) {
-            double areaValue = areasList.get(i).doubleValue();
-            Double currAvgAreaValue = avgValuesList.get(i);
-            ExperimentsWrapper eInfo = 
-                        new ExperimentsWrapper("Эксперимент №" + (i + 1), pointAmount, areaValue, currAvgAreaValue, "");
-            TreeItem<ExperimentsWrapper> eItem = new TreeItem<>(eInfo);
-            generalTable_itemRoot.getChildren().add(eItem);
-        }
-
-        data_table_inGeneral.autosize();
-    }
-
-    private double calcAvgValueInList(int limitNumber, List<BigDecimal> values, int accuracy) throws IllegalArgumentException {
-        BigDecimal numLimit = BigDecimal.valueOf(limitNumber);
-        if (limitNumber <= 0) throw new IllegalArgumentException("limitNumber <= 0!!!");
-        if (limitNumber > values.size()) throw new IllegalArgumentException("limit number > size of values list!!!");
-        BigDecimal sumValue = BigDecimal.ZERO;
-        for (int i = 0; i < numLimit.intValue(); i++) {
-            sumValue = sumValue.add(values.get(i));
-        }
-        double currAvgAreaValue = sumValue.divide(numLimit, accuracy, RoundingMode.CEILING).doubleValue(); 
-        return currAvgAreaValue;  
     }
 
     private InputDataWrapper validateAndParseDataFromFields() {
@@ -308,6 +209,14 @@ public class MainController {
     public void prepareAllComponents() {
         this.prepareCharts();
         this.prepareTables();
+        this.prepareTabRulers();
+    }
+
+    private void prepareTabRulers() {
+        this.generalStatTabRuler = new GeneralStatTabRuler(all_points_chart, innerPointsSeries, outerPointsSeries, 
+                                            accuracy_chart, accuracySeries, data_table_inGeneral);
+        this.scatterChartsTabRuler = new ScatterChartsTabRuler(this.pointCharts_container);
+        this.functionDrawingTabRuler = null;
     }
 
     /**
@@ -316,12 +225,12 @@ public class MainController {
     private void prepareCharts() {
 
         // Создание наборов значений для графиков
-        scatterSeries1 = new XYChart.Series<Number, Number>();
-        scatterSeries2 = new XYChart.Series<Number, Number>();
+        innerPointsSeries = new XYChart.Series<Number, Number>();
+        outerPointsSeries = new XYChart.Series<Number, Number>();
         accuracySeries = new XYChart.Series<Number, Number>();
 
         all_points_chart.getData().clear();
-        all_points_chart.getData().addAll(scatterSeries1, scatterSeries2);
+        all_points_chart.getData().addAll(innerPointsSeries, outerPointsSeries);
 
         accuracy_chart.getData().clear();
         accuracy_chart.getData().add(accuracySeries);
@@ -335,8 +244,8 @@ public class MainController {
         accuracy_chart.getYAxis().setLabel("Значение площади фигуры");
 
         // Наименования наборов значений для подписей в легенде графика
-        scatterSeries1.setName("Точки во внутренней фигуре");
-        scatterSeries2.setName("Точки во внешней фигуре");
+        innerPointsSeries.setName("Точки во внутренней фигуре");
+        outerPointsSeries.setName("Точки во внешней фигуре");
         accuracySeries.setName("AVG площади с учётом предыдущих экспериментов");
     }
 
