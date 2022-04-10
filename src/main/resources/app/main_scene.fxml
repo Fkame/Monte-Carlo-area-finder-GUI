@@ -6,6 +6,7 @@
 <?import javafx.scene.chart.ScatterChart?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
@@ -133,7 +134,7 @@
          <tabs>
             <Tab text="Основная статистика">
                <content>
-                  <Accordion cacheShape="false" expandedPane="$scatter_chart_pane">
+                  <Accordion fx:id="statisticPanesContainer" cacheShape="false">
                     <panes>
                         <TitledPane fx:id="scatter_chart_pane" expanded="false" text="Сгенерированные в модели точки">
                            <content>
@@ -226,6 +227,14 @@
                                           <Font size="15.0" />
                                        </font>
                                     </TextField>
+                                    <CheckBox fx:id="autoY_check" mnemonicParsing="false" onAction="#autoYChanged" text="Автоматически" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                       <padding>
+                                          <Insets left="10.0" />
+                                       </padding>
+                                    </CheckBox>
                                  </children>
                               </GridPane>
                            </content>

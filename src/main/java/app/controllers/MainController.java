@@ -17,19 +17,23 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.layout.FlowPane;
 
 /** 
- * TODO: Сделать разбиение на 1 класс = 1 вкладка, сделать многопоточность, реализовать отрисовку функций перед моделированием, добавить чтение любых функций
+ * 
  */
 public class MainController {
 
@@ -129,6 +133,12 @@ public class MainController {
     @FXML
     private TreeTableView<ExperimentsWrapper> data_table_inGeneral;
 
+    @FXML
+    private Accordion statisticPanesContainer;
+
+    @FXML 
+    private TitledPane scatter_chart_pane;
+
     /* ============================ Элементы вкладки с отрисовкой графиков функций по желанию ======================= */
 
     /**
@@ -147,6 +157,9 @@ public class MainController {
     private TextField maxY_field;
     @FXML
     private TextField stepValue_field;
+
+    @FXML
+    private CheckBox autoY_check;
 
     /* ==================== Элементы вкладки с отрисовкой точечных графиков под каждый отдельных эксперимент =========== */
 
@@ -176,7 +189,7 @@ public class MainController {
         this.generalStatTabRuler.clearAccuracyChart();
         this.scatterChartsTabRuler.clearChartsContainer();;
 
-        InputDataWrapper dataWrap = validateAndParseDataFromFields();
+        InputDataWrapper dataWrap = validateAndParseDataFromMainModelFields();
         if (dataWrap.getErrorMessages().size() > 0) {
             SupplyMethods.getErrorAlert(String.join("\n", dataWrap.getErrorMessages())).showAndWait();
             return;
@@ -210,18 +223,42 @@ public class MainController {
         
     }
 
+    /**
+     * Событие, вызываемое, когда нажимается кнопка с флажком. Если ставится в активное положение - нужно заблокировать поля ввода
+     * минимального и максимального У, если ставится в неактивное положение - поля нужно разблокировать.
+     * @param event
+     */
+    @FXML
+    public void autoYChanged (ActionEvent event) {
+        if (this.autoY_check.selectedProperty().get() == true) {
+            this.minY_field.setDisable(true);
+            this.maxY_field.setDisable(true);
+            this.minY_field.setText("");
+            this.maxY_field.setText("");
+
+        } else {
+            this.minY_field.setDisable(false);
+            this.maxY_field.setDisable(false);
+        }
+    }
+
     @FXML
     /**
      * TODO: Вставить встроенный браузер и передавать markdown
      * @param event
      */
-    private void showHelp(ActionEvent event) {
+    public void showHelp(ActionEvent event) {
         Alert alert = new Alert(AlertType.INFORMATION, "Button is in development proccess");
         alert.setHeaderText(null);
         alert.showAndWait();
     }
 
-    private InputDataWrapper validateAndParseDataFromFields() {
+    /**
+     * Метод собирает значения с полей, в которых задаются параметры модели. Помимо этого, проверяет их по ряду критериев.
+     * @return объект типа {@link InputDataWrapper}, в котором содержатся спарсенные из полей значения, если они валидны.
+     * Если какое-то из значений не валидно, то заполняется поле с сообщениями об ошибках, а значение в поле не вносится.
+     */
+    private InputDataWrapper validateAndParseDataFromMainModelFields() {
         InputDataWrapper dataWrap = new InputDataWrapper();
 
         Integer amountOfPointsToGenerate = 
@@ -263,6 +300,12 @@ public class MainController {
         this.prepareCharts();
         this.prepareTables();
         this.prepareTabRulers();
+
+        this.statisticPanesContainer.setExpandedPane(this.scatter_chart_pane);
+
+        this.autoY_check.setSelected(true);
+        this.minY_field.setDisable(true);
+        this.maxY_field.setDisable(true);
     }
 
     private void prepareTabRulers() {
