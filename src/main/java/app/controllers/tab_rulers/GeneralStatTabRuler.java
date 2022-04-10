@@ -61,10 +61,15 @@ public class GeneralStatTabRuler {
      * TODO: Сделать вывод текущего среднего значения для каждого эксперимента, чтобы было видно, как оно меняется.
     */
     public void showDataOnDataTable(InputDataWrapper inputDataWrapper, List<BigDecimal> areasList, List<Double> avgValuesList) {
+        if (areasList.size() == 0 | avgValuesList.size() == 0) throw new IllegalArgumentException("На отрисовку таблицы подан какой-то пустой массив");
         Double lastAvgValue = avgValuesList.get(avgValuesList.size() - 1);
         int amountOfExperiments = areasList.size();
 
-        ExperimentsWrapper rootValue = new ExperimentsWrapper("Список экспериментов", amountOfExperiments, lastAvgValue, lastAvgValue, "");
+        String addData = (new StringBuilder()).append("Points = ").append(inputDataWrapper.getAmountOfPoints()).append("\n")
+                        .append("Experiments = ").append(inputDataWrapper.getAmountOfExperiments()).append("\n")
+                        .append("Rectange = ").append(inputDataWrapper.getBigArea().toString())
+                        .toString();
+        ExperimentsWrapper rootValue = new ExperimentsWrapper("Список экспериментов", amountOfExperiments, lastAvgValue, lastAvgValue, addData);
         TreeItem<ExperimentsWrapper> generalTable_itemRoot = new TreeItem<ExperimentsWrapper>(rootValue);
         data_table_inGeneral.setRoot(generalTable_itemRoot);
 

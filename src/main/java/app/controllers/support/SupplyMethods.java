@@ -10,6 +10,11 @@ import javafx.scene.control.Alert.AlertType;
 
 public class SupplyMethods {
     
+    /**
+     * Метод, который способен создать полную копию поданного на вход объекта класса {@link javafx.scene.chartXYChart.Series}
+     * @param seriesToCopy
+     * @return
+     */
     public static XYChart.Series<Number, Number> copySeriesData(XYChart.Series<Number, Number> seriesToCopy) {
         XYChart.Series<Number, Number> copy = new XYChart.Series<>();
         for (XYChart.Data<Number, Number> dataToCopy : seriesToCopy.getData()) {
@@ -34,5 +39,25 @@ public class SupplyMethods {
         }
         double currAvgAreaValue = sumValue.divide(numLimit, accuracy, RoundingMode.CEILING).doubleValue(); 
         return currAvgAreaValue;  
+    }
+
+    public static Integer parseAndValidateInteger(String intStr, int minValue, int maxValue) {
+        try {
+            Integer value = Integer.parseInt(intStr);
+            if (value < minValue | value > maxValue) throw new Exception();
+            return value;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static Double parseAndValidateDouble(String doubleStr, double minValue, double maxValue) {
+        try {
+            Double value = Double.parseDouble(doubleStr);
+            if (value < minValue | value > maxValue) throw new Exception();
+            return value;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

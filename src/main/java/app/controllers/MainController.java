@@ -1,7 +1,6 @@
 package app.controllers;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -14,71 +13,94 @@ import app.monte_carlo_method.MonteCarloAreaMethod;
 import app.monte_carlo_method.StatePoint2D;
 import app.wrappers.ExperimentsWrapper;
 import app.wrappers.InputDataWrapper;
-import app.controllers.support.SupplyMethods;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
-import javafx.stage.Stage;
 
 /** 
  * TODO: Сделать разбиение на 1 класс = 1 вкладка, сделать многопоточность, реализовать отрисовку функций перед моделированием, добавить чтение любых функций
  */
 public class MainController {
 
+    /* ============================ Элементы управлением UI во вкладках =======================*/
+
+    /**
+     * Объект, в который вынесен весь функционал по управлению выводом в UI элементы во вкладке с общей статистикой. 
+     */
     private GeneralStatTabRuler generalStatTabRuler;
+
+     /**
+     * Объект, в который вынесен весь функционал по управлению выводом в UI элементы во вкладке с графиками точек каждого эксперимента. 
+     */
     private ScatterChartsTabRuler scatterChartsTabRuler;
+
+     /**
+     * Объект, в который вынесен весь функционал по управлению выводом в UI элементы во вкладке отрисовкой графиков функции. 
+     */
     private FunctionDrawingTabRuler functionDrawingTabRuler;
 
-    @FXML
+    /* ============================ Элементы общего запуска модели =======================*/
+
+    
     /**
      * Поле ввода количества точек для генерации.
      */
+    @FXML
     private TextField enter_num_points;
 
-    @FXML
     /**
      * Поле воода количества экспериментов
      */
+    @FXML
     private TextField enter_num_experiments;
 
+    /**
+     * Прямоугольник можно задать 2-мя точками по диагонали. Это поле ввода левого нижнего угла по Х описывающего фигуру прямоугольника.
+     */
     @FXML
     private TextField enter_outershapeX1;
 
+    /**
+     * Прямоугольник можно задать 2-мя точками по диагонали. Это поле ввода правого врехнего угла по Х описывающего фигуру прямоугольника.
+     */
     @FXML
     private TextField enter_outershapeX2;
 
+     /**
+     * Прямоугольник можно задать 2-мя точками по диагонали. Это поле ввода левого нижнего угла по Y описывающего фигуру прямоугольника.
+     */
     @FXML
     private TextField enter_outershapeY1;
 
+     /**
+     * Прямоугольник можно задать 2-мя точками по диагонали. Это поле ввода правого верхнего угла по Y описывающего фигуру прямоугольника.
+     */
     @FXML
     private TextField enter_outershapeY2;
-
-    @FXML 
+ 
     /**
      * Кнопка запуска экспериментов
      */
+    @FXML
     private Button start_btn;
     
-    @FXML 
+    /* ============================ Элементы вкладки с Общей Статистикой =======================*/
+ 
     /**
      * График из точек, на котором отображаются точки во внешней фигуре и попавшие во внутреннюю фигуру
      */
+    @FXML
     private ScatterChart<Number, Number> all_points_chart;
 
     /**
@@ -90,10 +112,10 @@ public class MainController {
      */
     private XYChart.Series<Number, Number> outerPointsSeries;
 
-    @FXML
     /**
      * Среднее значение площади в зависимости от числа экспериментов
      */
+    @FXML
     private LineChart<Number, Number> accuracy_chart;
 
     /**
@@ -101,10 +123,18 @@ public class MainController {
      */
     private  XYChart.Series<Number, Number> accuracySeries;
 
+    /**
+     * TreeTableView элемент, в котором записываются результаты каждого эксперимента и считается среднее значение.
+     */
     @FXML
     private TreeTableView<ExperimentsWrapper> data_table_inGeneral;
 
-    @FXML 
+    /* ============================ Элементы вкладки с отрисовкой графиков функций по желанию ======================= */
+
+    /**
+     * График, в котором отрисовываются все введённые пользователем функции до запуска модели.
+     */
+    @FXML
     private LineChart<Number, Number> functions_chart;
     
     @FXML
@@ -118,14 +148,30 @@ public class MainController {
     @FXML
     private TextField stepValue_field;
 
+    /* ==================== Элементы вкладки с отрисовкой точечных графиков под каждый отдельных эксперимент =========== */
+
     @FXML
     private FlowPane pointCharts_container;
+
+    /* ============================================================================== */
 
     // JavaFX он нужен пустой
     public MainController() {}
 
+    /**
+     * Метод вызывается нажатием на кнопку запауска поиска площади.
+     * <p>Метод запуска модели на поиск площади замкнутой фигуры, описанной функциями.
+     * <p>Алгоритм следующий:
+     * <ol>
+     *  <li>Очистка графиков (таблица очищается сама по себе в алгоритме). </li>
+     *  <li>Валидация значений в полях (чтобы количество точек не было отрицательным и т.д.). </li>
+     *  <li>Поочередное выполнение экспериментов с добавлением результатов в элементы UI.</li>
+     *  <li>После выполнения всех экспериментов, все данные заносятся в таблицу.</li>
+     * </ol>
+     * @param event
+     */
     @FXML
-    private void startMethod(ActionEvent event) {
+    public void startMethod(ActionEvent event) {
         this.generalStatTabRuler.clearAllPointsChart();
         this.generalStatTabRuler.clearAccuracyChart();
         this.scatterChartsTabRuler.clearChartsContainer();;
@@ -139,6 +185,8 @@ public class MainController {
         MonteCarloAreaMethod areaFinder = new MonteCarloAreaMethod(dataWrap.getBigArea(), new Random());
 
         ArrayList<BigDecimal> areasList = new ArrayList<>();
+
+        // Список с средними значениями площадей после каждого нового эксперимента. Типа хранится то, как уточнялась площадь.
         ArrayList<Double> currAvgAreasValuesList = new ArrayList<>();
 
         for (int i = 0; i < dataWrap.getAmountOfExperiments(); i++) {
@@ -163,6 +211,10 @@ public class MainController {
     }
 
     @FXML
+    /**
+     * TODO: Вставить встроенный браузер и передавать markdown
+     * @param event
+     */
     private void showHelp(ActionEvent event) {
         Alert alert = new Alert(AlertType.INFORMATION, "Button is in development proccess");
         alert.setHeaderText(null);
@@ -171,41 +223,42 @@ public class MainController {
 
     private InputDataWrapper validateAndParseDataFromFields() {
         InputDataWrapper dataWrap = new InputDataWrapper();
-        int amountOfPointsToGenerate = 0;
-        try {
-            amountOfPointsToGenerate = Integer.parseInt(this.enter_num_points.getText());
-            if (amountOfPointsToGenerate <= 0) throw new Exception();
-            dataWrap.setAmountOfPoints(amountOfPointsToGenerate);
-        } catch (Exception e) {
+
+        Integer amountOfPointsToGenerate = 
+                                SupplyMethods.parseAndValidateInteger(this.enter_num_points.getText(), 1, Integer.MAX_VALUE);
+        if (amountOfPointsToGenerate == null) {
             dataWrap.addErrorMessage("Ошибка в поле ввода количества точек для генерации!");
+        } else {
+            dataWrap.setAmountOfPoints(amountOfPointsToGenerate);
         }
 
-        int amountOfExperiments = 0;
-        try {
-            amountOfExperiments = Integer.parseInt(this.enter_num_experiments.getText());
-            if (amountOfExperiments <= 0) throw new Exception();
-            dataWrap.setAmountOfExperiments(amountOfExperiments);
-        } catch (Exception e) {
+        Integer amountOfExperiments = 
+                            SupplyMethods.parseAndValidateInteger(this.enter_num_experiments.getText(), 1, Integer.MAX_VALUE);
+        if (amountOfExperiments == null) {
             dataWrap.addErrorMessage("Ошибка в поле ввода количества экспериментов!");
+        } else {
+            dataWrap.setAmountOfExperiments(amountOfExperiments);
         }
 
-        double x1, x2, y1, y2 = 0;
-        try {
-            x1 = Double.parseDouble(this.enter_outershapeX1.getText());
-            x2 = Double.parseDouble(this.enter_outershapeX2.getText());
-            y1 = Double.parseDouble(this.enter_outershapeY1.getText());
-            y2 = Double.parseDouble(this.enter_outershapeY2.getText());
-            if (x1 > x2 | y1 > y2) throw new Exception();
+        Double x1 = SupplyMethods.parseAndValidateDouble(this.enter_outershapeX1.getText(), -Double.MAX_VALUE, Double.MAX_VALUE);
+        Double x2 = SupplyMethods.parseAndValidateDouble(this.enter_outershapeX2.getText(), -Double.MAX_VALUE, Double.MAX_VALUE);
+        Double y1 = SupplyMethods.parseAndValidateDouble(this.enter_outershapeY1.getText(), -Double.MAX_VALUE, Double.MAX_VALUE);
+        Double y2 = SupplyMethods.parseAndValidateDouble(this.enter_outershapeY2.getText(), -Double.MAX_VALUE, Double.MAX_VALUE);
+        // Ставятся две вертикальные черты, чтобы проверка закончилась при первом же FALSE, иначе на 2х последних сравнениях будет Exception.
+        if (x1 == null || x2 == null || y1 == null || y2 == null || x1 > x2 || y1 > y2) {
+            dataWrap.addErrorMessage("Ошибка при вводе диагональных точек описывающего прямоугольника!");
+        } else {
             double width = BigDecimal.valueOf(x2).subtract(BigDecimal.valueOf(x1)).doubleValue();
             double height = BigDecimal.valueOf(y2).subtract(BigDecimal.valueOf(y1)).doubleValue();
             dataWrap.setBigArea(new Rectangle2D(x1, y1, width, height));
-        } catch (Exception e) {
-            dataWrap.addErrorMessage("Ошибка при вводе диагональных точек описывающего прямоугольника!");
         }
-
         return dataWrap;
     }
 
+    /**
+     * Перед тем, как пользователь получит доступ к GUI и нажмёт какую-либо кнопку, нужно подготовить все элементы, создать все
+     * подконтроллеры.
+     */
     public void prepareAllComponents() {
         this.prepareCharts();
         this.prepareTables();
