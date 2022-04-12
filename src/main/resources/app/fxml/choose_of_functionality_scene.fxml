@@ -1,23 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
 
-<VBox alignment="CENTER" prefHeight="400.0" prefWidth="300.0" spacing="50.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.ChooseFunctionalitySceneController">
+<GridPane alignment="CENTER" stylesheets="@../css/choose_of_functionality_style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.ChooseFunctionalitySceneController">
+   <columnConstraints>
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="190.0" minWidth="10.0" prefWidth="189.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="437.0" minWidth="10.0" prefWidth="229.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="249.0" minWidth="10.0" prefWidth="182.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints maxHeight="143.0" minHeight="8.0" prefHeight="50.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="335.0" minHeight="10.0" prefHeight="108.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="310.0" minHeight="10.0" prefHeight="191.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="258.0" minHeight="10.0" prefHeight="72.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="248.0" minHeight="10.0" prefHeight="189.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="133.0" minHeight="10.0" prefHeight="80.0" vgrow="SOMETIMES" />
+   </rowConstraints>
    <children>
-      <Label text="Выберите режим программы:">
-         <VBox.margin>
-            <Insets bottom="50.0" />
-         </VBox.margin>
-      </Label>
-      <Button fx:id="mode_2d_btn" mnemonicParsing="false" onAction="#on2dModeClicked" text="Плоскость" />
-      <Button fx:id="mode_1d_btn" mnemonicParsing="false" onAction="#on1dModeClicked" text="Прямая">
-         <VBox.margin>
-            <Insets bottom="50.0" />
-         </VBox.margin>
-      </Button>
+      <Label alignment="CENTER" styleClass="main-label" text="Выберите режим программы:" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+      <StackPane styleClass="pane" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <children>
+            <VBox alignment="CENTER" styleClass="container">
+               <children>
+                  <Button fx:id="mode_2d_btn" alignment="CENTER" mnemonicParsing="false" onAction="#on2dModeClicked" />
+                  <Label styleClass="text-label" text="Работа на плоскости (2D)" />
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
+      <StackPane styleClass="pane" GridPane.columnIndex="1" GridPane.rowIndex="4">
+         <children>
+            <VBox alignment="CENTER" styleClass="container">
+               <children>
+                  <Button fx:id="mode_1d_btn" mnemonicParsing="false" onAction="#on1dModeClicked" />
+                  <Label styleClass="text-label" text="Работа на линии (1D)" />
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
    </children>
-</VBox>
+</GridPane>

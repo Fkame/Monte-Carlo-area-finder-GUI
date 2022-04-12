@@ -1,0 +1,49 @@
+.root {
+    -fx-background-color: #1f1f1f;
+    -fx-pref-width: 600px;
+    -fx-pref-height:700px;
+}
+
+.main-label {
+    -fx-font: bold 25px "Serif";
+    -fx-text-fill: #e8e8e8;
+}
+
+.pane {
+    -fx-background-color: rgba(39, 39, 39, 0.866);
+    -fx-alignment: center;
+    -fx-background-radius: 20px;
+}
+
+.container {
+    -fx-alignment: center;
+    -fx-spacing: 10px;
+}
+
+.text-label {
+    -fx-font: 15px "Serif";
+    -fx-text-fill: #e8e8e8;
+}
+
+#mode_2d_btn {
+    -fx-background-image: url("../img/2d_icon.png");
+    -fx-background-color: #e8e8e8;
+    -fx-background-repeat: stretch;
+    -fx-background-size: 125 125;
+    -fx-background-position: center center;
+    -fx-pref-width: 125;
+    -fx-pref-height: 125;
+    -fx-background-radius: 10px;
+}
+
+#mode_1d_btn {
+    -fx-background-image: url("../img/1d_icon.png");
+    -fx-background-color: #e8e8e8;
+    -fx-background-repeat: stretch;
+    -fx-background-size: 125 125;
+    -fx-background-position: center center;
+    -fx-pref-width: 125;
+    -fx-pref-height: 125;
+    -fx-background-radius: 10px;
+}
+

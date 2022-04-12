@@ -32,7 +32,8 @@ public class App extends Application {
 
         stage.setScene(scene);
         stage.centerOnScreen();
-        stage.setTitle("Исследование площади фигуры методом Монте-Карло");
+        stage.setTitle("Окно выбора режима работы");
+        stage.setResizable(false);
         stage.show();
     }
 
