@@ -17,7 +17,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Accordion;
@@ -31,6 +30,8 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.layout.FlowPane;
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.ExpressionBuilder;
 
 /** 
  * 
@@ -220,7 +221,15 @@ public class MainController {
 
     @FXML
     public void draw_functions_method(ActionEvent event) {
-        
+        /*
+        Expression e = new ExpressionBuilder("3 * sin(y) - 2 / (x - 2)")
+            .variables("x", "y")
+            .build()
+            .setVariable("x", 2.3)
+            .setVariable("y", 3.14);
+        double result = e.evaluate();
+        */ 
+                  
     }
 
     /**

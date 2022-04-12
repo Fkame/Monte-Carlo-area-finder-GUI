@@ -1,14 +1,14 @@
 package app;
 
+import java.io.IOException;
+import java.net.URL;
+
+import app.controllers.MainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.io.IOException;
-
-import app.controllers.MainController;
 
 /**
  * JavaFX App
@@ -20,11 +20,19 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("main_scene"));
-        controller.prepareAllComponents();
+
+        Parent node = App.loadFXML("choose_of_functionality_scene");
+        if (node == null) {
+            System.out.println("Node is null, exit from prog.");
+            System.exit(-1);
+        }
+        scene = new Scene(node);
+
+        //controller.prepareAllComponents();
 
         stage.setScene(scene);
         stage.centerOnScreen();
+        stage.setTitle("Исследование площади фигуры методом Монте-Карло");
         stage.show();
     }
 
@@ -33,10 +41,22 @@ public class App extends Application {
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
-        Parent root = fxmlLoader.load();
-        App.controller = fxmlLoader.getController();
-        return root;
+        String path = "fxml/" + fxml + ".fxml";
+        URL url = null;
+        try {
+            url = App.class.getResource(path);
+            FXMLLoader fxmlLoader = new FXMLLoader(url);
+            Parent root = fxmlLoader.load();
+            //App.controller = fxmlLoader.getController();
+            return root;
+        }
+        catch (Exception e) {
+            System.out.println("Path=" + path + ", isURLNull=" + (url == null));
+            if (url != null) System.out.println("URL path = " + url.getPath());
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static void main(String[] args) {

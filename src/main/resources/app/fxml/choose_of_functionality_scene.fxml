@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox alignment="CENTER" prefHeight="400.0" prefWidth="300.0" spacing="50.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.ChooseFunctionalitySceneController">
+   <children>
+      <Label text="Выберите режим программы:">
+         <VBox.margin>
+            <Insets bottom="50.0" />
+         </VBox.margin>
+      </Label>
+      <Button fx:id="mode_2d_btn" mnemonicParsing="false" onAction="#on2dModeClicked" text="Плоскость" />
+      <Button fx:id="mode_1d_btn" mnemonicParsing="false" onAction="#on1dModeClicked" text="Прямая">
+         <VBox.margin>
+            <Insets bottom="50.0" />
+         </VBox.margin>
+      </Button>
+   </children>
+</VBox>

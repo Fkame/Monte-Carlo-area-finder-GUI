@@ -58,3 +58,8 @@ https://betacode.net/11055/javafx-accordion
 
 -- JavaFX Tip 22: Autosize (Tree) Table Columns
 https://dlsc.com/2015/12/10/javafx-tip-22-autosize-tree-table-columns/
+
+-- Java Equation parser
+https://stackoverflow.com/questions/4681959/algebra-equation-parser-for-java
+https://lallafa.objecthunter.net/exp4j/
+https://www.baeldung.com/java-evaluate-math-expression-string
