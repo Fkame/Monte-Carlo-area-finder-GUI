@@ -80,6 +80,11 @@ https://www.baeldung.com/java-evaluate-math-expression-string
 -- Guides
 https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html#pane
 https://code.makery.ch/ru/library/javafx-tutorial/part4/
+https://docs.oracle.com/javase/8/javafx/user-interface-tutorial/apply-css.htm
+https://docs.oracle.com/javase/8/javafx/get-started-tutorial/css.htm
+http://fxexperience.com/2011/12/styling-fx-buttons-with-css/
+https://www.vojtechruzicka.com/javafx-css/
+https://guigarage.com/2016/02/javafx-and-css-pseudo-classes/
 
 -- JavaFX How to set scene background image
 https://stackoverflow.com/questions/9738146/javafx-how-to-set-scene-background-image
