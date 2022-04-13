@@ -36,7 +36,7 @@ import net.objecthunter.exp4j.ExpressionBuilder;
 /** 
  * 
  */
-public class MainController {
+public class AreaFinder2dController {
 
     /* ============================ Элементы управлением UI во вкладках =======================*/
 
@@ -109,11 +109,11 @@ public class MainController {
     private ScatterChart<Number, Number> all_points_chart;
 
     /**
-     * Набор точек, которые попали во внутреннюю фигуру на графике {@link MainController#all_points_chart}
+     * Набор точек, которые попали во внутреннюю фигуру на графике {@link AreaFinder2dController#all_points_chart}
      */
     private XYChart.Series<Number, Number> innerPointsSeries;
     /**
-     * Набор точек, которые НЕ попали во внутреннюю фигуру на графике {@link MainController#all_points_chart}
+     * Набор точек, которые НЕ попали во внутреннюю фигуру на графике {@link AreaFinder2dController#all_points_chart}
      */
     private XYChart.Series<Number, Number> outerPointsSeries;
 
@@ -170,7 +170,7 @@ public class MainController {
     /* ============================================================================== */
 
     // JavaFX он нужен пустой
-    public MainController() {}
+    public AreaFinder2dController() {}
 
     /**
      * Метод вызывается нажатием на кнопку запауска поиска площади.

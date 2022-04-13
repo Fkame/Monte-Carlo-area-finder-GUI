@@ -3,7 +3,10 @@ package app;
 import java.io.IOException;
 import java.net.URL;
 
-import app.controllers.MainController;
+import app.controllers.ChooseFunctionalitySceneController;
+import app.controllers.AreaFinder2dController;
+import app.wrappers.SceneInfoWrapper;
+import app.wrappers.ScenesInfoContainer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,20 +18,27 @@ import javafx.stage.Stage;
  */
 public class App extends Application {
 
-    private static Scene scene;
-    private static MainController controller;
-
     @Override
     public void start(Stage stage) throws IOException {
+        ScenesInfoContainer scenesContainer = new ScenesInfoContainer();
 
-        Parent node = App.loadFXML("choose_of_functionality_scene");
-        if (node == null) {
+        SceneInfoLoader<ChooseFunctionalitySceneController> chooseFuncSceneLoader = new SceneInfoLoader<>();
+        scenesContainer.setChooseFunctionalitySceneWrapper(chooseFuncSceneLoader.loadSceneData("choose_of_functionality_scene"));
+
+        SceneInfoLoader<AreaFinder2dController> area2dFinderLoader = new SceneInfoLoader<>();
+        scenesContainer.setAreaFinder2dWrapper(area2dFinderLoader.loadSceneData("area_finder_2d_scene"));
+
+        if (scenesContainer.getChooseFunctionalitySceneWrapper() == null ||
+            scenesContainer.getAreaFinder2dWrapper() == null) 
+        {
             System.out.println("Node is null, exit from prog.");
             System.exit(-1);
         }
-        scene = new Scene(node);
-
+       
+        Scene scene = new Scene(scenesContainer.getChooseFunctionalitySceneWrapper().getRoot());
         //controller.prepareAllComponents();
+        //controller.setStage();
+        //controller.setScenesWrapper();
 
         stage.setScene(scene);
         stage.centerOnScreen();
@@ -37,28 +47,11 @@ public class App extends Application {
         stage.show();
     }
 
+    /*
     static void setRoot(String fxml) throws IOException {
         scene.setRoot(loadFXML(fxml));
     }
-
-    private static Parent loadFXML(String fxml) throws IOException {
-        String path = "fxml/" + fxml + ".fxml";
-        URL url = null;
-        try {
-            url = App.class.getResource(path);
-            FXMLLoader fxmlLoader = new FXMLLoader(url);
-            Parent root = fxmlLoader.load();
-            //App.controller = fxmlLoader.getController();
-            return root;
-        }
-        catch (Exception e) {
-            System.out.println("Path=" + path + ", isURLNull=" + (url == null));
-            if (url != null) System.out.println("URL path = " + url.getPath());
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
+    */
 
     public static void main(String[] args) {
         launch();
