@@ -15,7 +15,9 @@ public interface ISceneController {
 
     public Stage getStage();
 
-    public void setScenesInfoContainer(ScenesInfoContainer infoContainer);
+    public void setScenesWrapper(ScenesInfoContainer scenesWrapper);
 
-    public ScenesInfoContainer getScenesInfoContainer();
+    public ScenesInfoContainer getScenesWrapper();
+
+    public void prepareStageBeforeShow();
 }

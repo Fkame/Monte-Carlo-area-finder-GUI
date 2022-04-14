@@ -13,6 +13,7 @@ import app.monte_carlo_method.MonteCarloAreaMethod;
 import app.monte_carlo_method.StatePoint2D;
 import app.wrappers.ExperimentsWrapper;
 import app.wrappers.InputDataWrapper;
+import app.wrappers.ScenesInfoContainer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
@@ -30,13 +31,15 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.layout.FlowPane;
-import net.objecthunter.exp4j.Expression;
-import net.objecthunter.exp4j.ExpressionBuilder;
+import javafx.stage.Stage;
 
 /** 
  * 
  */
-public class AreaFinder2dController {
+public class AreaFinder2dController implements ISceneController{
+
+    private Stage stage;
+    private ScenesInfoContainer scenesWrapper;
 
     /* ============================ Элементы управлением UI во вкладках =======================*/
 
@@ -251,11 +254,11 @@ public class AreaFinder2dController {
         }
     }
 
-    @FXML
     /**
      * TODO: Вставить встроенный браузер и передавать markdown
      * @param event
      */
+    @FXML
     public void showHelp(ActionEvent event) {
         Alert alert = new Alert(AlertType.INFORMATION, "Button is in development proccess");
         alert.setHeaderText(null);
@@ -305,6 +308,7 @@ public class AreaFinder2dController {
      * Перед тем, как пользователь получит доступ к GUI и нажмёт какую-либо кнопку, нужно подготовить все элементы, создать все
      * подконтроллеры.
      */
+    @Override
     public void prepareAllComponents() {
         this.prepareCharts();
         this.prepareTables();
@@ -375,5 +379,32 @@ public class AreaFinder2dController {
         expAdditionalCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, String>("additionalInfo"));
 
         data_table_inGeneral.getColumns().addAll(expNameCol, expElemsNumCol, expAreaValueCol, expAvgAreaValueCol, expAdditionalCol);
+    }
+
+    @Override
+    public void prepareStageBeforeShow() {
+        stage.centerOnScreen();
+        stage.setTitle("Поиск площади на плоскости");
+        stage.setResizable(true);
+    }
+
+    @Override
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    @Override
+    public Stage getStage() {
+        return this.stage;
+    }
+
+    @Override
+    public void setScenesWrapper(ScenesInfoContainer scenesWrapper) {
+        this.scenesWrapper = scenesWrapper;
+    }
+
+    @Override
+    public ScenesInfoContainer getScenesWrapper() {
+        return this.scenesWrapper;
     }
 }

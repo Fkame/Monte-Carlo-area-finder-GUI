@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import app.controllers.ChooseFunctionalitySceneController;
+import app.controllers.ISceneController;
 import app.controllers.AreaFinder2dController;
 import app.wrappers.SceneInfoWrapper;
 import app.wrappers.ScenesInfoContainer;
@@ -34,25 +35,23 @@ public class App extends Application {
             System.out.println("Node is null, exit from prog.");
             System.exit(-1);
         }
-       
-        Scene scene = new Scene(scenesContainer.getChooseFunctionalitySceneWrapper().getRoot());
-        //controller.prepareAllComponents();
-        //controller.setStage();
-        //controller.setScenesWrapper();
 
+        for (ISceneController controller : scenesContainer.getControllersAsList()) {
+            controller.prepareAllComponents();
+            controller.setStage(stage);
+            controller.setScenesWrapper(scenesContainer);
+        }
+
+        Parent root = scenesContainer.getChooseFunctionalitySceneWrapper().getRoot();
+        Scene scene = new Scene(root);
         stage.setScene(scene);
-        stage.centerOnScreen();
-        stage.setTitle("Окно выбора режима работы");
-        stage.setResizable(false);
+
+        ISceneController chooseStageController = scenesContainer.getChooseFunctionalitySceneWrapper().getController();
+        chooseStageController.prepareStageBeforeShow();
+
         stage.show();
     }
-
-    /*
-    static void setRoot(String fxml) throws IOException {
-        scene.setRoot(loadFXML(fxml));
-    }
-    */
-
+    
     public static void main(String[] args) {
         launch();
     }

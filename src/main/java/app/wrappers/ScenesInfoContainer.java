@@ -1,7 +1,11 @@
 package app.wrappers;
 
+import java.util.Arrays;
+import java.util.List;
+
 import app.controllers.AreaFinder2dController;
 import app.controllers.ChooseFunctionalitySceneController;
+import app.controllers.ISceneController;
 
 public class ScenesInfoContainer {
     
@@ -24,5 +28,10 @@ public class ScenesInfoContainer {
 
     public SceneInfoWrapper<AreaFinder2dController> getAreaFinder2dWrapper() {
         return this.areaFinder2dWrapper;
+    }
+
+    public List<ISceneController> getControllersAsList() {
+        return Arrays.asList(this.chooseFuncSceneWrapper.getController(), 
+                        this.areaFinder2dWrapper.getController());
     }
 }
