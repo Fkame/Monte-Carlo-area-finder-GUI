@@ -3,20 +3,22 @@ package app.controllers;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import app.controllers.support.SupplyMethods;
 import app.controllers.tab_rulers.FunctionDrawingTabRuler;
 import app.controllers.tab_rulers.GeneralStatTabRuler;
 import app.controllers.tab_rulers.ScatterChartsTabRuler;
-import app.monte_carlo_method.MonteCarloAreaMethod;
-import app.monte_carlo_method.StatePoint2D;
+import app.monte_carlo_area_finder.IFigureWithCalculatedArea;
+import app.monte_carlo_area_finder.IPointsGenerator;
+import app.monte_carlo_area_finder.MonteCarloAreaMethod;
+import app.monte_carlo_area_finder.StatePoint2D;
 import app.wrappers.ExperimentsWrapper;
 import app.wrappers.InputDataWrapperFor2D;
 import app.wrappers.SceneInfoWrapper;
 import app.wrappers.ScenesInfoContainer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
@@ -25,7 +27,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
@@ -196,22 +197,33 @@ public class AreaFinder2dController implements ISceneController{
             return;
         }
 
-        MonteCarloAreaMethod areaFinder = new MonteCarloAreaMethod(dataWrap.getBigArea(), new Random());
+        MonteCarloAreaMethod areaFinder = new MonteCarloAreaMethod();
+        IFigureWithCalculatedArea innerFigure = point -> {
+            double upperY = Math.log(point.getX());
+            double bottomY = BigDecimal.valueOf(point.getX())
+                            .subtract(BigDecimal.valueOf(3.0))
+                            .doubleValue();
+            if (point.getY() < upperY & point.getY() > bottomY) return true;
+            return false;
+        };
+
+        final Rectangle2D bigArea = dataWrap.getBigArea();
+        IPointsGenerator generator = () -> {
+            double randX = MonteCarloAreaMethod.generateDoubleInInterval(bigArea.getMinX(), bigArea.getMaxX());
+            double randY = MonteCarloAreaMethod.generateDoubleInInterval(bigArea.getMinY(), bigArea.getMaxY());
+            return new Point2D(randX, randY);
+        };
+
+        double bigAreaValue = BigDecimal.valueOf(bigArea.getWidth())
+                        .multiply(BigDecimal.valueOf(bigArea.getHeight()))
+                        .setScale(3)
+                        .doubleValue();
 
         ArrayList<BigDecimal> areasList = new ArrayList<>();
-
-        // Список с средними значениями площадей после каждого нового эксперимента. Типа хранится то, как уточнялась площадь.
         ArrayList<Double> currAvgAreasValuesList = new ArrayList<>();
 
         for (int i = 0; i < dataWrap.getAmountOfExperiments(); i++) {
-            BigDecimal areaValue = areaFinder.findAreaValue(point -> {
-                double upperY = Math.log(point.getX());
-                double bottomY = BigDecimal.valueOf(point.getX())
-                                .subtract(BigDecimal.valueOf(3.0))
-                                .doubleValue();
-                if (point.getY() < upperY & point.getY() > bottomY) return true;
-                return false;
-            }, dataWrap.getAmountOfPoints());
+            BigDecimal areaValue = areaFinder.findAreaValue(innerFigure, generator, dataWrap.getAmountOfPoints(), bigAreaValue);
 
             areasList.add(areaValue);
 

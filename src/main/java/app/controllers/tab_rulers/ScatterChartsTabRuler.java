@@ -3,7 +3,7 @@ package app.controllers.tab_rulers;
 import java.util.List;
 
 import app.controllers.support.SupplyMethods;
-import app.monte_carlo_method.StatePoint2D;
+import app.monte_carlo_area_finder.StatePoint2D;
 import javafx.scene.Scene;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;

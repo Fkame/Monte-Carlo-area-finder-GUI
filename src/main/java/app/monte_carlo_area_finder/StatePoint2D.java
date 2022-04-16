@@ -1,4 +1,4 @@
-package app.monte_carlo_method;
+package app.monte_carlo_area_finder;
 
 import javafx.geometry.Point2D;
 

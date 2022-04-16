@@ -3,7 +3,7 @@ package app.controllers.tab_rulers;
 import java.math.BigDecimal;
 import java.util.List;
 
-import app.monte_carlo_method.StatePoint2D;
+import app.monte_carlo_area_finder.StatePoint2D;
 import app.wrappers.ExperimentsWrapper;
 import app.wrappers.InputDataWrapperFor2D;
 import javafx.scene.chart.LineChart;

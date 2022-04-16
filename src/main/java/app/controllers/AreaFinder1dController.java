@@ -3,19 +3,21 @@ package app.controllers;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import app.controllers.support.SupplyMethods;
 import app.controllers.tab_rulers.GeneralStatTabRuler;
 import app.controllers.tab_rulers.ScatterChartsTabRuler;
-import app.monte_carlo_method.MonteCarloAreaMethod;
-import app.monte_carlo_method.StatePoint2D;
+import app.monte_carlo_area_finder.IFigureWithCalculatedArea;
+import app.monte_carlo_area_finder.IPointsGenerator;
+import app.monte_carlo_area_finder.MonteCarloAreaMethod;
+import app.monte_carlo_area_finder.StatePoint2D;
 import app.wrappers.ExperimentsWrapper;
 import app.wrappers.InputDataWrapperFor1D;
 import app.wrappers.SceneInfoWrapper;
 import app.wrappers.ScenesInfoContainer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.ScatterChart;
@@ -139,16 +141,33 @@ public class AreaFinder1dController implements ISceneController {
             return;
         }
 
-        MonteCarloAreaMethod areaFinder = new MonteCarloAreaMethod(dataWrap.getBigInterval(), new Random());
         ArrayList<BigDecimal> areasList = new ArrayList<>();
         ArrayList<Double> currAvgAreasValuesList = new ArrayList<>();
 
-        for (int i = 0; i < dataWrap.getAmountOfExperiments(); i++) {
-            BigDecimal areaValue = areaFinder.findAreaValue(point -> {
-                return (point.getX() >= dataWrap.getInnerInterval().getStartX()) & 
-                        (point.getX() <= dataWrap.getInnerInterval().getEndX()); 
-            }, dataWrap.getAmountOfPoints());
+        MonteCarloAreaMethod areaFinder = new MonteCarloAreaMethod();
 
+        // Создание определителя попадания внутрь пользовательского интервала
+        final double leftInnerLimit = dataWrap.getInnerInterval().getStartX();
+        final double rightInnerLimit = dataWrap.getInnerInterval().getEndX();
+        IFigureWithCalculatedArea innerFigure = point -> {
+            return (point.getX() >= leftInnerLimit) & (point.getX() <= rightInnerLimit);
+        };
+
+        // Создание генератора чисел в пределах большого интервала.
+        final double leftOuterLimit = dataWrap.getBigInterval().getStartX();
+        final double rightOuterLimit = dataWrap.getBigInterval().getEndX();
+        IPointsGenerator generator = () -> {
+            return new Point2D(MonteCarloAreaMethod.generateDoubleInInterval(leftOuterLimit, rightOuterLimit), 0);
+        };
+
+        // Вычисление длины большого интервала
+        double bigAreaValue = BigDecimal.valueOf(rightOuterLimit)
+                            .subtract(BigDecimal.valueOf(leftOuterLimit))
+                            .setScale(3)
+                            .doubleValue();
+
+        for (int i = 0; i < dataWrap.getAmountOfExperiments(); i++) {
+            BigDecimal areaValue = areaFinder.findAreaValue(innerFigure, generator, dataWrap.getAmountOfPoints(), bigAreaValue);
             areasList.add(areaValue);
 
             List<StatePoint2D> unmodifPointsList = areaFinder.getLastRunGeneratedPoints();
@@ -161,8 +180,6 @@ public class AreaFinder1dController implements ISceneController {
             currAvgAreasValuesList.add(currAvgAreaValue);
         }
         this.generalStatTabRuler.showDataOnDataTable(dataWrap.getAmountOfPoints(), dataWrap.toString(), areasList, currAvgAreasValuesList);
-
-        //SupplyMethods.getErrorAlert("Функционал ещё в разработке").showAndWait();
     }
 
     @FXML
