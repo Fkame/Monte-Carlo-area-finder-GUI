@@ -3,6 +3,7 @@ package app.wrappers;
 import java.util.Arrays;
 import java.util.List;
 
+import app.controllers.AreaFinder1dController;
 import app.controllers.AreaFinder2dController;
 import app.controllers.ChooseFunctionalitySceneController;
 import app.controllers.ISceneController;
@@ -11,6 +12,7 @@ public class ScenesInfoContainer {
     
     private SceneInfoWrapper<ChooseFunctionalitySceneController> chooseFuncSceneWrapper;
     private SceneInfoWrapper<AreaFinder2dController> areaFinder2dWrapper;
+    private SceneInfoWrapper<AreaFinder1dController> areaFinder1dWrapper;
 
     public ScenesInfoContainer() { }
 
@@ -30,8 +32,17 @@ public class ScenesInfoContainer {
         return this.areaFinder2dWrapper;
     }
 
+    public void setAreaFinder1dWrapper(SceneInfoWrapper<AreaFinder1dController> areaFinder1dWrapper) {
+        this.areaFinder1dWrapper = areaFinder1dWrapper;
+    }
+
+    public SceneInfoWrapper<AreaFinder1dController> getAreaFinder1dWrapper() {
+        return this.areaFinder1dWrapper;
+    }
+
     public List<ISceneController> getControllersAsList() {
         return Arrays.asList(this.chooseFuncSceneWrapper.getController(), 
-                        this.areaFinder2dWrapper.getController());
+                        this.areaFinder2dWrapper.getController(), 
+                        this.areaFinder1dWrapper.getController());
     }
 }

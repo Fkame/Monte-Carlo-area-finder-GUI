@@ -38,10 +38,10 @@
             <RowConstraints maxHeight="123.0" minHeight="10.0" prefHeight="59.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="142.0" minHeight="10.0" prefHeight="61.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="164.0" minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="166.0" minHeight="10.0" prefHeight="117.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="197.0" minHeight="10.0" prefHeight="126.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="73.0" minHeight="3.0" prefHeight="40.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="106.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="166.0" minHeight="10.0" prefHeight="96.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="197.0" minHeight="10.0" prefHeight="127.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="73.0" minHeight="3.0" prefHeight="54.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="106.0" minHeight="10.0" prefHeight="47.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
             <Label text="y1 = ln(x)" GridPane.halignment="CENTER">
@@ -115,16 +115,28 @@
                   </VBox>
                </content>
             </TitledPane>
-            <Button fx:id="start_btn" mnemonicParsing="false" onAction="#startMethod" prefHeight="35.0" prefWidth="227.0" text="Запустить модель" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.vgrow="ALWAYS">
+            <Button mnemonicParsing="false" onAction="#startMethod" prefHeight="35.0" prefWidth="227.0" text="Запустить модель" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.vgrow="ALWAYS">
                <font>
                   <Font size="16.0" />
                </font>
             </Button>
-            <Button fx:id="help_btn" alignment="CENTER" mnemonicParsing="false" onAction="#showHelp" prefHeight="35.0" prefWidth="228.0" text="Справка" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="9">
-               <font>
-                  <Font size="16.0" />
-               </font>
-            </Button>
+            <HBox spacing="10.0" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="9">
+               <children>
+                  <Button alignment="CENTER" mnemonicParsing="false" onAction="#goBack" prefHeight="35.0" prefWidth="228.0" text="Назад">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Button>
+                  <Button alignment="CENTER" mnemonicParsing="false" onAction="#showHelp" prefHeight="35.0" prefWidth="228.0" text="Справка">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Button>
+               </children>
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </HBox>
          </children>
          <padding>
             <Insets left="10.0" right="10.0" />

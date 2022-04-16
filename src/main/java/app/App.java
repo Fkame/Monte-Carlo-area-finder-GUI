@@ -1,15 +1,13 @@
 package app;
 
 import java.io.IOException;
-import java.net.URL;
 
+import app.controllers.AreaFinder1dController;
+import app.controllers.AreaFinder2dController;
 import app.controllers.ChooseFunctionalitySceneController;
 import app.controllers.ISceneController;
-import app.controllers.AreaFinder2dController;
-import app.wrappers.SceneInfoWrapper;
 import app.wrappers.ScenesInfoContainer;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -29,8 +27,12 @@ public class App extends Application {
         SceneInfoLoader<AreaFinder2dController> area2dFinderLoader = new SceneInfoLoader<>();
         scenesContainer.setAreaFinder2dWrapper(area2dFinderLoader.loadSceneData("area_finder_2d_scene"));
 
+        SceneInfoLoader<AreaFinder1dController> area1dFinderLoader = new SceneInfoLoader<>();
+        scenesContainer.setAreaFinder1dWrapper(area1dFinderLoader.loadSceneData("area_finder_1d_scene"));
+
         if (scenesContainer.getChooseFunctionalitySceneWrapper() == null ||
-            scenesContainer.getAreaFinder2dWrapper() == null) 
+            scenesContainer.getAreaFinder2dWrapper() == null ||
+            scenesContainer.getAreaFinder1dWrapper() == null) 
         {
             System.out.println("Node is null, exit from prog.");
             System.exit(-1);

@@ -118,26 +118,7 @@ public class TestMonteCarloAreaMethod {
 
         int amountOfExperiments = 10;
         for (int i = 1; i < amountOfExperiments + 1; i++) {
-            System.out.println("-- Experiment #" + i);
-            int amountOfPointsToGenerate = 100;
-            BigDecimal areaValue = areaFinder.findAreaValue(amountOfPointsToGenerate);
-            if (areaValue == null | areaValue.doubleValue() <= 0) assertTrue(false);
-            System.out.println("Points = " + amountOfPointsToGenerate + ", inner figure area value = " + areaValue.doubleValue());
-
-            amountOfPointsToGenerate = 1000;
-            areaValue = areaFinder.findAreaValue(amountOfPointsToGenerate);
-            if (areaValue == null | areaValue.doubleValue() <= 0) assertTrue(false);
-            System.out.println("Points = " + amountOfPointsToGenerate + ", inner figure area value = " + areaValue.doubleValue());
-
-            amountOfPointsToGenerate = 10000;
-            areaValue = areaFinder.findAreaValue(amountOfPointsToGenerate);
-            if (areaValue == null | areaValue.doubleValue() <= 0) assertTrue(false);
-            System.out.println("Points = " + amountOfPointsToGenerate + ", inner figure area value = " + areaValue.doubleValue());
-
-            amountOfPointsToGenerate = 100000;
-            areaValue = areaFinder.findAreaValue(amountOfPointsToGenerate);
-            if (areaValue == null | areaValue.doubleValue() <= 0) assertTrue(false);
-            System.out.println("Points = " + amountOfPointsToGenerate + ", inner figure area value = " + areaValue.doubleValue());
+           
         }
     }
 

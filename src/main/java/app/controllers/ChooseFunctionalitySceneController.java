@@ -31,7 +31,13 @@ public class ChooseFunctionalitySceneController implements ISceneController {
 
     @FXML
     public void on1dModeClicked(ActionEvent event) {
-        SupplyMethods.getErrorAlert("Окно ещё не готово").showAndWait();
+        SceneInfoWrapper<AreaFinder1dController> nextSceneWrapper = scenesWrapper.getAreaFinder1dWrapper();
+
+        Scene nextScene = nextSceneWrapper.getRoot().getScene();
+        if (nextScene == null) nextScene = new Scene(nextSceneWrapper.getRoot());
+        this.stage.setScene(nextScene);
+
+        nextSceneWrapper.getController().prepareStageBeforeShow();
     }
 
     @Override 

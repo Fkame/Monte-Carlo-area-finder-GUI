@@ -7,7 +7,7 @@ import javafx.geometry.Rectangle2D;
 /**
  * Обёртка для вводимых пользователем данных. Чтобы было удобно их вместе передавать между методами
  */
-public class InputDataWrapper {
+public class InputDataWrapperFor2D {
     /**
      * Количество точек, которые нужно сгенерировать для поиска площади внутренней фигуры.
      */
@@ -30,22 +30,22 @@ public class InputDataWrapper {
      */
     private ArrayList<String> errorMessages;
 
-    public InputDataWrapper() { 
+    public InputDataWrapperFor2D() { 
         errorMessages = new ArrayList<String>();
     }
 
-    public InputDataWrapper(int amountOfPointsToGenerate, int amountOfExperiments, Rectangle2D bigArea) {
+    public InputDataWrapperFor2D(int amountOfPointsToGenerate, int amountOfExperiments, Rectangle2D bigArea) {
         this.amountOfExperiments = amountOfExperiments;
         this.amountOfPointsToGenerate = amountOfPointsToGenerate;
         this.bigArea = bigArea;
     }
 
-    public InputDataWrapper(String errorMessage) {
+    public InputDataWrapperFor2D(String errorMessage) {
         this.errorMessages = new ArrayList<String>();
         this.errorMessages.add(errorMessage);
     }
 
-    public InputDataWrapper(ArrayList<String> errorMessages) {
+    public InputDataWrapperFor2D(ArrayList<String> errorMessages) {
         this.errorMessages = new ArrayList<String>(errorMessages);
     }
 
@@ -79,5 +79,17 @@ public class InputDataWrapper {
 
     public ArrayList<String> getErrorMessages() {
         return this.errorMessages;
+    }
+
+    public String toString() {
+        return new StringBuilder().append("Points=[").append(this.amountOfPointsToGenerate).append("]\n")
+                    .append("Experiments=[").append(this.amountOfExperiments).append("]\n")
+                    .append("OuterRectange:{")
+                        .append("\n    minX=[").append(this.bigArea.getMinX())
+                        .append("]\n    minY=[").append(this.bigArea.getMinY())
+                        .append("]\n    maxX=[").append(this.bigArea.getMaxX())
+                        .append("]\n    maxY=[").append(this.bigArea.getMaxY())
+                    .append("]}")
+                    .toString();
     }
 }

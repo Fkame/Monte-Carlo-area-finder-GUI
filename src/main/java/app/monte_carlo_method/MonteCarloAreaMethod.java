@@ -7,9 +7,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.shape.Line;
 
 public class MonteCarloAreaMethod {
     
@@ -44,6 +44,19 @@ public class MonteCarloAreaMethod {
         lastRunGeneratedPoints = new ArrayList<StatePoint2D>();
     }
 
+    public MonteCarloAreaMethod(Line area, Random generator) {
+        if (area == null) throw new IllegalArgumentException("input area must not be null!"); 
+        if (generator == null) throw new IllegalArgumentException("Generator must not be null!");
+        this.leftBottomPoint = new Point2D(area.getStartX(), area.getStartY());
+        this.leftUpperPoint = this.leftBottomPoint;
+        this.rightUpperPoint = new Point2D(area.getEndX(), area.getEndY());
+        this.rightBottomPoint = rightUpperPoint;
+        this.generator = generator;
+
+        allGeneratedPoints = new ArrayList<ArrayList<StatePoint2D>>();
+        lastRunGeneratedPoints = new ArrayList<StatePoint2D>();
+    }
+
     public MonteCarloAreaMethod(Rectangle2D rectangeArea, Random generator) {
         if (rectangeArea == null) throw new IllegalArgumentException("input area must not be null!");
         if (generator == null) throw new IllegalArgumentException("Generator must not be null!");
@@ -57,11 +70,15 @@ public class MonteCarloAreaMethod {
         lastRunGeneratedPoints = new ArrayList<StatePoint2D>();
     }
 
-    public BigDecimal findAreaValue(int amountOfPointsToGenerate) {
+    public BigDecimal findAreaValue(IFigureWithCalculatedArea innerFigure, int amountOfPointsToGenerate) {
         lastRunGeneratedPoints.clear();
         for (int i = 0; i < amountOfPointsToGenerate; i++) {
             Point2D randPoint = generateRandomPointInBigArea();
-            StatePoint2D stateRandPoint = new StatePoint2D(randPoint, isPointInSearchArea(randPoint));
+
+            //StatePoint2D stateRandPoint = new StatePoint2D(randPoint, isPointInSearchArea(randPoint));
+            boolean isPointInInnerArea = innerFigure.isPointInArea(randPoint);
+            StatePoint2D stateRandPoint = new StatePoint2D(randPoint, isPointInInnerArea);
+
             lastRunGeneratedPoints.add(stateRandPoint);
         }
         allGeneratedPoints.add(lastRunGeneratedPoints);
@@ -78,27 +95,36 @@ public class MonteCarloAreaMethod {
     }
 
     public BigDecimal getBigAreaValue() {
+        // Поправка для работоспособности метода в 1д пространствах.
+        if (this.leftBottomPoint.distance(leftUpperPoint) == 0)
+            return BigDecimal.valueOf(leftBottomPoint.distance(rightBottomPoint));
+            
         return BigDecimal.valueOf(leftBottomPoint.distance(rightBottomPoint))
                 .multiply(BigDecimal.valueOf(leftBottomPoint.distance(leftUpperPoint)));
     }
 
     public Point2D generateRandomPointInBigArea() {
         BigDecimal minXValue = BigDecimal.valueOf(this.leftBottomPoint.getX());
-            BigDecimal maxXValue = BigDecimal.valueOf(this.rightBottomPoint.getX());
-            BigDecimal minYValue = BigDecimal.valueOf(this.leftBottomPoint.getY());
-            BigDecimal maxYValue = BigDecimal.valueOf(this.rightUpperPoint.getY());
-            double randX = BigDecimal.valueOf(generator.nextDouble())
-                        .multiply(maxXValue.subtract(minXValue))
-                        .add(minXValue)
-                        .doubleValue();
-            double randY = BigDecimal.valueOf(generator.nextDouble())
-                        .multiply(maxYValue.subtract(minYValue))
-                        .add(minYValue)
-                        .doubleValue();
-            Point2D randomPoint = new Point2D(randX, randY);
-            return randomPoint;
+        BigDecimal maxXValue = BigDecimal.valueOf(this.rightBottomPoint.getX());
+        BigDecimal minYValue = BigDecimal.valueOf(this.leftBottomPoint.getY());
+        BigDecimal maxYValue = BigDecimal.valueOf(this.rightUpperPoint.getY());
+        double randX = BigDecimal.valueOf(generator.nextDouble())
+                    .multiply(maxXValue.subtract(minXValue))
+                    .add(minXValue)
+                    .doubleValue();
+        double randY = BigDecimal.valueOf(generator.nextDouble())
+                    .multiply(maxYValue.subtract(minYValue))
+                    .add(minYValue)
+                    .doubleValue();
+        Point2D randomPoint = new Point2D(randX, randY);
+        return randomPoint;
     }
 
+    /**
+     * TODO: Удалить метод.
+     * @param point
+     * @return
+     */
     public boolean isPointInSearchArea(Point2D point) {
         double upperY = Math.log(point.getX());
         double bottomY = BigDecimal.valueOf(point.getX())

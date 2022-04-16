@@ -6,40 +6,32 @@ import java.util.List;
 import java.util.Random;
 
 import app.controllers.support.SupplyMethods;
-import app.controllers.tab_rulers.FunctionDrawingTabRuler;
 import app.controllers.tab_rulers.GeneralStatTabRuler;
 import app.controllers.tab_rulers.ScatterChartsTabRuler;
 import app.monte_carlo_method.MonteCarloAreaMethod;
 import app.monte_carlo_method.StatePoint2D;
 import app.wrappers.ExperimentsWrapper;
-import app.wrappers.InputDataWrapperFor2D;
+import app.wrappers.InputDataWrapperFor1D;
 import app.wrappers.SceneInfoWrapper;
 import app.wrappers.ScenesInfoContainer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Accordion;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
-/** 
- * 
- */
-public class AreaFinder2dController implements ISceneController{
-
+public class AreaFinder1dController implements ISceneController {
+    
     private Stage stage;
     private ScenesInfoContainer scenesWrapper;
 
@@ -55,14 +47,14 @@ public class AreaFinder2dController implements ISceneController{
      */
     private ScatterChartsTabRuler scatterChartsTabRuler;
 
-     /**
-     * Объект, в который вынесен весь функционал по управлению выводом в UI элементы во вкладке отрисовкой графиков функции. 
-     */
-    private FunctionDrawingTabRuler functionDrawingTabRuler;
-
     /* ============================ Элементы общего запуска модели =======================*/
 
-    
+    @FXML 
+    private TextField enter_innershapeX1;
+
+    @FXML 
+    private TextField enter_innershapeX2;
+
     /**
      * Поле ввода количества точек для генерации.
      */
@@ -87,21 +79,8 @@ public class AreaFinder2dController implements ISceneController{
     @FXML
     private TextField enter_outershapeX2;
 
-     /**
-     * Прямоугольник можно задать 2-мя точками по диагонали. Это поле ввода левого нижнего угла по Y описывающего фигуру прямоугольника.
-     */
-    @FXML
-    private TextField enter_outershapeY1;
-
-     /**
-     * Прямоугольник можно задать 2-мя точками по диагонали. Это поле ввода правого верхнего угла по Y описывающего фигуру прямоугольника.
-     */
-    @FXML
-    private TextField enter_outershapeY2;
-
-
     /* ============================ Элементы вкладки с Общей Статистикой =======================*/
- 
+    
     /**
      * График из точек, на котором отображаются точки во внешней фигуре и попавшие во внутреннюю фигуру
      */
@@ -140,28 +119,6 @@ public class AreaFinder2dController implements ISceneController{
     @FXML 
     private TitledPane scatter_chart_pane;
 
-    /* ============================ Элементы вкладки с отрисовкой графиков функций по желанию ======================= */
-
-    /**
-     * График, в котором отрисовываются все введённые пользователем функции до запуска модели.
-     */
-    @FXML
-    private LineChart<Number, Number> functions_chart;
-    
-    @FXML
-    private TextField minX_field;
-    @FXML
-    private TextField maxX_field;
-    @FXML
-    private TextField minY_field;
-    @FXML
-    private TextField maxY_field;
-    @FXML
-    private TextField stepValue_field;
-
-    @FXML
-    private CheckBox autoY_check;
-
     /* ==================== Элементы вкладки с отрисовкой точечных графиков под каждый отдельных эксперимент =========== */
 
     @FXML
@@ -169,48 +126,27 @@ public class AreaFinder2dController implements ISceneController{
 
     /* ============================================================================== */
 
-    // JavaFX он нужен пустой
-    public AreaFinder2dController() {}
-
-    /**
-     * Метод вызывается нажатием на кнопку запауска поиска площади.
-     * <p>Метод запуска модели на поиск площади замкнутой фигуры, описанной функциями.
-     * <p>Алгоритм следующий:
-     * <ol>
-     *  <li>Очистка графиков (таблица очищается сама по себе в алгоритме). </li>
-     *  <li>Валидация значений в полях (чтобы количество точек не было отрицательным и т.д.). </li>
-     *  <li>Поочередное выполнение экспериментов с добавлением результатов в элементы UI.</li>
-     *  <li>После выполнения всех экспериментов, все данные заносятся в таблицу.</li>
-     * </ol>
-     * @param event
-     */
     @FXML
     public void startMethod(ActionEvent event) {
         this.generalStatTabRuler.clearAllPointsChart();
         this.generalStatTabRuler.clearAccuracyChart();
         this.scatterChartsTabRuler.clearChartsContainer();
 
-        InputDataWrapperFor2D dataWrap = validateAndParseDataFromMainModelFields();
+        InputDataWrapperFor1D dataWrap = validateAndParseDataFromMainModelFields();
+
         if (dataWrap.getErrorMessages().size() > 0) {
             SupplyMethods.getErrorAlert(String.join("\n", dataWrap.getErrorMessages())).showAndWait();
             return;
         }
 
-        MonteCarloAreaMethod areaFinder = new MonteCarloAreaMethod(dataWrap.getBigArea(), new Random());
-
+        MonteCarloAreaMethod areaFinder = new MonteCarloAreaMethod(dataWrap.getBigInterval(), new Random());
         ArrayList<BigDecimal> areasList = new ArrayList<>();
-
-        // Список с средними значениями площадей после каждого нового эксперимента. Типа хранится то, как уточнялась площадь.
         ArrayList<Double> currAvgAreasValuesList = new ArrayList<>();
 
         for (int i = 0; i < dataWrap.getAmountOfExperiments(); i++) {
             BigDecimal areaValue = areaFinder.findAreaValue(point -> {
-                double upperY = Math.log(point.getX());
-                double bottomY = BigDecimal.valueOf(point.getX())
-                                .subtract(BigDecimal.valueOf(3.0))
-                                .doubleValue();
-                if (point.getY() < upperY & point.getY() > bottomY) return true;
-                return false;
+                return (point.getX() >= dataWrap.getInnerInterval().getStartX()) & 
+                        (point.getX() <= dataWrap.getInnerInterval().getEndX()); 
             }, dataWrap.getAmountOfPoints());
 
             areasList.add(areaValue);
@@ -225,58 +161,28 @@ public class AreaFinder2dController implements ISceneController{
             currAvgAreasValuesList.add(currAvgAreaValue);
         }
         this.generalStatTabRuler.showDataOnDataTable(dataWrap.getAmountOfPoints(), dataWrap.toString(), areasList, currAvgAreasValuesList);
+
+        //SupplyMethods.getErrorAlert("Функционал ещё в разработке").showAndWait();
     }
 
-    @FXML
-    public void draw_functions_method(ActionEvent event) {
-        /*
-        Expression e = new ExpressionBuilder("3 * sin(y) - 2 / (x - 2)")
-            .variables("x", "y")
-            .build()
-            .setVariable("x", 2.3)
-            .setVariable("y", 3.14);
-        double result = e.evaluate();
-        */ 
-                  
-    }
-
-    /**
-     * Событие, вызываемое, когда нажимается кнопка с флажком. Если ставится в активное положение - нужно заблокировать поля ввода
-     * минимального и максимального У, если ставится в неактивное положение - поля нужно разблокировать.
-     * @param event
-     */
-    @FXML
-    public void autoYChanged (ActionEvent event) {
-        if (this.autoY_check.selectedProperty().get() == true) {
-            this.minY_field.setDisable(true);
-            this.maxY_field.setDisable(true);
-            this.minY_field.setText("");
-            this.maxY_field.setText("");
-
-        } else {
-            this.minY_field.setDisable(false);
-            this.maxY_field.setDisable(false);
-        }
-    }
-
-    /**
-     * TODO: Вставить встроенный браузер и передавать markdown
-     * @param event
-     */
     @FXML
     public void showHelp(ActionEvent event) {
-        Alert alert = new Alert(AlertType.INFORMATION, "Button is in development proccess");
-        alert.setHeaderText(null);
-        alert.showAndWait();
+        SupplyMethods.getErrorAlert("Функционал ещё в разработке").showAndWait();
+    } 
+
+    @FXML
+    public void goBack(ActionEvent event) {
+        SceneInfoWrapper<ChooseFunctionalitySceneController> nextSceneWrapper = scenesWrapper.getChooseFunctionalitySceneWrapper();
+
+        Scene nextScene = nextSceneWrapper.getRoot().getScene();
+        if (nextScene == null) nextScene = new Scene(nextSceneWrapper.getRoot());
+        this.stage.setScene(nextScene);
+
+        nextSceneWrapper.getController().prepareStageBeforeShow();
     }
 
-    /**
-     * Метод собирает значения с полей, в которых задаются параметры модели. Помимо этого, проверяет их по ряду критериев.
-     * @return объект типа {@link InputDataWrapperFor2D}, в котором содержатся спарсенные из полей значения, если они валидны.
-     * Если какое-то из значений не валидно, то заполняется поле с сообщениями об ошибках, а значение в поле не вносится.
-     */
-    private InputDataWrapperFor2D validateAndParseDataFromMainModelFields() {
-        InputDataWrapperFor2D dataWrap = new InputDataWrapperFor2D();
+    private InputDataWrapperFor1D validateAndParseDataFromMainModelFields() {
+        InputDataWrapperFor1D dataWrap = new InputDataWrapperFor1D();
 
         Integer amountOfPointsToGenerate = 
                                 SupplyMethods.parseAndValidateInteger(this.enter_num_points.getText(), 1, Integer.MAX_VALUE);
@@ -294,36 +200,29 @@ public class AreaFinder2dController implements ISceneController{
             dataWrap.setAmountOfExperiments(amountOfExperiments);
         }
 
-        Double x1 = SupplyMethods.parseAndValidateDouble(this.enter_outershapeX1.getText(), -Double.MAX_VALUE, Double.MAX_VALUE);
-        Double x2 = SupplyMethods.parseAndValidateDouble(this.enter_outershapeX2.getText(), -Double.MAX_VALUE, Double.MAX_VALUE);
-        Double y1 = SupplyMethods.parseAndValidateDouble(this.enter_outershapeY1.getText(), -Double.MAX_VALUE, Double.MAX_VALUE);
-        Double y2 = SupplyMethods.parseAndValidateDouble(this.enter_outershapeY2.getText(), -Double.MAX_VALUE, Double.MAX_VALUE);
-        // Ставятся две вертикальные черты, чтобы проверка закончилась при первом же FALSE, иначе на 2х последних сравнениях будет Exception.
-        if (x1 == null || x2 == null || y1 == null || y2 == null || x1 > x2 || y1 > y2) {
-            dataWrap.addErrorMessage("Ошибка при вводе диагональных точек описывающего прямоугольника!");
+        Double outerX1 = SupplyMethods.parseAndValidateDouble(this.enter_outershapeX1.getText(), -Double.MAX_VALUE, Double.MAX_VALUE);
+        Double outerX2 = SupplyMethods.parseAndValidateDouble(this.enter_outershapeX2.getText(), -Double.MAX_VALUE, Double.MAX_VALUE);
+        if (outerX1 == null || outerX2 == null || outerX1 > outerX2) {
+            dataWrap.addErrorMessage("Ошибка при вводе границ внешнего интервала!");
         } else {
-            double width = BigDecimal.valueOf(x2).subtract(BigDecimal.valueOf(x1)).doubleValue();
-            double height = BigDecimal.valueOf(y2).subtract(BigDecimal.valueOf(y1)).doubleValue();
-            dataWrap.setBigArea(new Rectangle2D(x1, y1, width, height));
+            dataWrap.setBigInterval(new Line(outerX1, 0, outerX2, 0));
         }
+
+        Double innerX1 = SupplyMethods.parseAndValidateDouble(this.enter_innershapeX1.getText(), -Double.MAX_VALUE, Double.MAX_VALUE);
+        Double innerX2 = SupplyMethods.parseAndValidateDouble(this.enter_innershapeX2.getText(), -Double.MAX_VALUE, Double.MAX_VALUE);
+        if (innerX1 == null || innerX2 == null || innerX1 > innerX2) {
+            dataWrap.addErrorMessage("Ошибка при вводе границ внутреннего интервала!");
+        }
+        else if (innerX1 < outerX1 || innerX2 > outerX2) {
+            dataWrap.addErrorMessage("Ошибка: границы внутренного интервала выходят за пределы внешнего интервала!");
+        }
+        else {
+            dataWrap.setInnerInterval(new Line(innerX1, 0, innerX2, 0));
+        }
+
         return dataWrap;
     }
 
-    @FXML
-    public void goBack(ActionEvent event) {
-        SceneInfoWrapper<ChooseFunctionalitySceneController> nextSceneWrapper = scenesWrapper.getChooseFunctionalitySceneWrapper();
-
-        Scene nextScene = nextSceneWrapper.getRoot().getScene();
-        if (nextScene == null) nextScene = new Scene(nextSceneWrapper.getRoot());
-        this.stage.setScene(nextScene);
-
-        nextSceneWrapper.getController().prepareStageBeforeShow();
-    }
-
-    /**
-     * Перед тем, как пользователь получит доступ к GUI и нажмёт какую-либо кнопку, нужно подготовить все элементы, создать все
-     * подконтроллеры.
-     */
     @Override
     public void prepareAllComponents() {
         this.prepareCharts();
@@ -331,22 +230,14 @@ public class AreaFinder2dController implements ISceneController{
         this.prepareTabRulers();
 
         this.statisticPanesContainer.setExpandedPane(this.scatter_chart_pane);
-
-        this.autoY_check.setSelected(true);
-        this.minY_field.setDisable(true);
-        this.maxY_field.setDisable(true);
     }
 
     private void prepareTabRulers() {
         this.generalStatTabRuler = new GeneralStatTabRuler(all_points_chart, innerPointsSeries, outerPointsSeries, 
                                             accuracy_chart, accuracySeries, data_table_inGeneral);
         this.scatterChartsTabRuler = new ScatterChartsTabRuler(this.pointCharts_container);
-        this.functionDrawingTabRuler = null;
     }
 
-    /**
-     * TODO: добавить создание осей и графика точек с 0, чтобы нормально отображалась легенда
-     */
     private void prepareCharts() {
 
         // Создание наборов значений для графиков
@@ -361,17 +252,17 @@ public class AreaFinder2dController implements ISceneController{
         accuracy_chart.getData().add(accuracySeries);
 
         // Названия графиков
-        all_points_chart.setTitle("Сгенерированные точки для поиска площади внутренней фигуры");
-        accuracy_chart.setTitle("Среднее значение площади экспериментов от 1 до текущего");
+        all_points_chart.setTitle("Сгенерированные точки в интервале");
+        accuracy_chart.setTitle("Среднее значение длины линии на интервале с каждым новым экспериментом");
 
         // Подписи осей
         accuracy_chart.getXAxis().setLabel("Номер эксперимента");
-        accuracy_chart.getYAxis().setLabel("Значение площади фигуры");
+        accuracy_chart.getYAxis().setLabel("Значение длины линии на интервале");
 
         // Наименования наборов значений для подписей в легенде графика
-        innerPointsSeries.setName("Точки во внутренней фигуре");
-        outerPointsSeries.setName("Точки во внешней фигуре");
-        accuracySeries.setName("AVG площади с учётом предыдущих экспериментов");
+        innerPointsSeries.setName("Точки во внутренней линии");
+        outerPointsSeries.setName("Точки во внешней линии");
+        accuracySeries.setName("AVG длины с учётом предыдущих экспериментов");
     }
 
     private void prepareTables() {
@@ -380,7 +271,7 @@ public class AreaFinder2dController implements ISceneController{
         expNameCol.prefWidthProperty().set(200);
         TreeTableColumn<ExperimentsWrapper, Integer> expElemsNumCol = new TreeTableColumn<ExperimentsWrapper, Integer>("Кол-во элементов");
         expElemsNumCol.prefWidthProperty().set(100);
-        TreeTableColumn<ExperimentsWrapper, Double> expAreaValueCol = new TreeTableColumn<ExperimentsWrapper, Double>("Значение площади");
+        TreeTableColumn<ExperimentsWrapper, Double> expAreaValueCol = new TreeTableColumn<ExperimentsWrapper, Double>("Значение длины");
         expAreaValueCol.prefWidthProperty().set(120);
         TreeTableColumn<ExperimentsWrapper, Double> expAvgAreaValueCol = new TreeTableColumn<ExperimentsWrapper, Double>("AVG площадь");
         expAvgAreaValueCol.prefWidthProperty().set(100);
