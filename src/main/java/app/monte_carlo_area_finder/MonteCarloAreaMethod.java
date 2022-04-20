@@ -42,7 +42,7 @@ public class MonteCarloAreaMethod {
 
     }
 
-    private int getAmountOfPointsInInnerArea(List<StatePoint2D> points) {
+    public int getAmountOfPointsInInnerArea(List<StatePoint2D> points) {
         return (int)points.stream().filter(point -> point.getState() == true).count();
     }
 
@@ -56,7 +56,8 @@ public class MonteCarloAreaMethod {
     public static int generateIntInInterval(int startValue, int endValue) throws IllegalArgumentException {
         if (startValue > endValue) throw new IllegalArgumentException("startValue > endValue in interval parameters");
         Random rand = new Random();
-        return rand.nextInt() * (endValue - startValue) + startValue;
+        //return rand.nextInt() * (endValue - startValue) + startValue;
+        return rand.nextInt(endValue - startValue) + startValue;
     }
 
     /**
@@ -86,36 +87,6 @@ public class MonteCarloAreaMethod {
         if (scaleValue <= 0) throw new IllegalArgumentException("Scale value cannot be <= 0");
         this.scaleValue = scaleValue;
     }
-
-    /*
-    public BigDecimal getBigAreaValue() {
-        // Поправка для работоспособности метода в 1д пространствах.
-        if (this.leftBottomPoint.distance(leftUpperPoint) == 0)
-            return BigDecimal.valueOf(leftBottomPoint.distance(rightBottomPoint));
-
-        return BigDecimal.valueOf(leftBottomPoint.distance(rightBottomPoint))
-                .multiply(BigDecimal.valueOf(leftBottomPoint.distance(leftUpperPoint)));
-    }
-    */
-
-    /*
-    public Point2D generateRandomPointInBigArea() {
-        BigDecimal minXValue = BigDecimal.valueOf(this.leftBottomPoint.getX());
-        BigDecimal maxXValue = BigDecimal.valueOf(this.rightBottomPoint.getX());
-        BigDecimal minYValue = BigDecimal.valueOf(this.leftBottomPoint.getY());
-        BigDecimal maxYValue = BigDecimal.valueOf(this.rightUpperPoint.getY());
-        double randX = BigDecimal.valueOf(generator.nextDouble())
-                    .multiply(maxXValue.subtract(minXValue))
-                    .add(minXValue)
-                    .doubleValue();
-        double randY = BigDecimal.valueOf(generator.nextDouble())
-                    .multiply(maxYValue.subtract(minYValue))
-                    .add(minYValue)
-                    .doubleValue();
-        Point2D randomPoint = new Point2D(randX, randY);
-        return randomPoint;
-    }
-    */
 
     public List<StatePoint2D> getLastRunGeneratedPoints() {
         return Collections.unmodifiableList(lastRunGeneratedPoints);

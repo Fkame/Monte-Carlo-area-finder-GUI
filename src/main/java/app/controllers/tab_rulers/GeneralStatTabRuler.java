@@ -14,6 +14,8 @@ import javafx.scene.control.TreeTableView;
 
 public class GeneralStatTabRuler {
 
+    public static int SCALE_VALUE = 5;
+
     private ScatterChart<Number, Number> all_points_chart;
 
     private XYChart.Series<Number, Number> innerPointsSeries;
@@ -67,7 +69,7 @@ public class GeneralStatTabRuler {
         data_table_inGeneral.setRoot(generalTable_itemRoot);
 
         for (int i = 0; i < amountOfExperiments; i++) {
-            double areaValue = areasList.get(i).doubleValue();
+            double areaValue = areasList.get(i).setScale(SCALE_VALUE).doubleValue();
             Double currAvgAreaValue = avgValuesList.get(i);
             ExperimentsWrapper eInfo = 
                         new ExperimentsWrapper("Эксперимент №" + (i + 1), numOfPoints, areaValue, currAvgAreaValue, "");

@@ -1,6 +1,7 @@
 package app.controllers;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,8 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeTableColumn;
@@ -80,6 +83,12 @@ public class AreaFinder1dController implements ISceneController {
      */
     @FXML
     private TextField enter_outershapeX2;
+
+    @FXML 
+    private ChoiceBox<String> generation_mode_choise;
+
+    @FXML
+    private CheckBox needToFindChance;
 
     /* ============================ Элементы вкладки с Общей Статистикой =======================*/
     
@@ -157,7 +166,10 @@ public class AreaFinder1dController implements ISceneController {
         final double leftOuterLimit = dataWrap.getBigInterval().getStartX();
         final double rightOuterLimit = dataWrap.getBigInterval().getEndX();
         IPointsGenerator generator = () -> {
-            return new Point2D(MonteCarloAreaMethod.generateDoubleInInterval(leftOuterLimit, rightOuterLimit), 0);
+            if (this.generation_mode_choise.getSelectionModel().getSelectedIndex() == 0)
+                return new Point2D(MonteCarloAreaMethod.generateDoubleInInterval(leftOuterLimit, rightOuterLimit), 0);
+            else
+                return new Point2D(MonteCarloAreaMethod.generateIntInInterval((int)leftOuterLimit, (int)rightOuterLimit), 0);
         };
 
         // Вычисление длины большого интервала
@@ -168,6 +180,11 @@ public class AreaFinder1dController implements ISceneController {
 
         for (int i = 0; i < dataWrap.getAmountOfExperiments(); i++) {
             BigDecimal areaValue = areaFinder.findAreaValue(innerFigure, generator, dataWrap.getAmountOfPoints(), bigAreaValue);
+            if (needToFindChance.isSelected()) {
+                //areaValue = areaValue.divide(BigDecimal.valueOf(bigAreaValue), 5, RoundingMode.CEILING);
+                areaValue = BigDecimal.valueOf(areaFinder.getAmountOfPointsInInnerArea(areaFinder.getLastRunGeneratedPoints()))
+                    .divide(BigDecimal.valueOf(areaFinder.getLastRunGeneratedPoints().size()), 5, RoundingMode.CEILING);
+            }
             areasList.add(areaValue);
 
             List<StatePoint2D> unmodifPointsList = areaFinder.getLastRunGeneratedPoints();
@@ -247,6 +264,10 @@ public class AreaFinder1dController implements ISceneController {
         this.prepareTabRulers();
 
         this.statisticPanesContainer.setExpandedPane(this.scatter_chart_pane);
+
+        this.generation_mode_choise.getItems().add("Все значения");
+        this.generation_mode_choise.getItems().add("Только целые числа");
+        this.generation_mode_choise.setValue("Все значения");
     }
 
     private void prepareTabRulers() {
@@ -288,9 +309,9 @@ public class AreaFinder1dController implements ISceneController {
         expNameCol.prefWidthProperty().set(200);
         TreeTableColumn<ExperimentsWrapper, Integer> expElemsNumCol = new TreeTableColumn<ExperimentsWrapper, Integer>("Кол-во элементов");
         expElemsNumCol.prefWidthProperty().set(100);
-        TreeTableColumn<ExperimentsWrapper, Double> expAreaValueCol = new TreeTableColumn<ExperimentsWrapper, Double>("Значение длины");
+        TreeTableColumn<ExperimentsWrapper, Double> expAreaValueCol = new TreeTableColumn<ExperimentsWrapper, Double>("Найденное значение");
         expAreaValueCol.prefWidthProperty().set(120);
-        TreeTableColumn<ExperimentsWrapper, Double> expAvgAreaValueCol = new TreeTableColumn<ExperimentsWrapper, Double>("AVG площадь");
+        TreeTableColumn<ExperimentsWrapper, Double> expAvgAreaValueCol = new TreeTableColumn<ExperimentsWrapper, Double>("AVG значение");
         expAvgAreaValueCol.prefWidthProperty().set(100);
         TreeTableColumn<ExperimentsWrapper, String> expAdditionalCol = new TreeTableColumn<ExperimentsWrapper, String>("Доп.информация");
         expAdditionalCol.prefWidthProperty().set(200);

@@ -18,6 +18,7 @@ https://stackoverflow.com/questions/44956955/javafx-use-chart-legend-to-toggle-s
 -- Reset scatter chart's node color in a mouse-clicked event
 https://stackoverflow.com/questions/64040215/reset-scatter-charts-node-color-in-a-mouse-clicked-event
 
+
 =========== Javafx Treetableview ==========
 
 -- Руководство JavaFX TreeTableView
@@ -29,6 +30,7 @@ https://stackoverflow.com/questions/39712661/javafx-word-wrap-on-a-treeview-tree
 
 -- JavaFX Tip 22: Autosize (Tree) Table Columns
 https://dlsc.com/2015/12/10/javafx-tip-22-autosize-tree-table-columns/
+
 
 ============= Javafx Other UI elements ==========
 
@@ -50,6 +52,7 @@ https://stackoverflow.com/questions/33194517/javafx-how-to-set-a-titeledpane-sel
 -- Javafx Accordion
 https://betacode.net/11055/javafx-accordion
 
+
 ========= Java BigDecimal staff ==============
 
 -- ArithmeticException: "Non-terminating decimal expansion; no exact representable decimal result"
@@ -69,12 +72,14 @@ https://www.youtube.com/watch?v=Ob9llA_QhQY&t=369s
 -- How to Make a Collection Read-Only in Java?
 https://www.geeksforgeeks.org/how-to-make-a-collection-read-only-in-java/
 
+
 ========== Equation parsing ============
 
 -- Java Equation parser
 https://stackoverflow.com/questions/4681959/algebra-equation-parser-for-java
 https://lallafa.objecthunter.net/exp4j/
 https://www.baeldung.com/java-evaluate-math-expression-string
+
 
 ========== Javafx CSS ============
 -- Guides
@@ -100,5 +105,35 @@ https://www.youtube.com/watch?v=AoKoCv6VtR0
 
 -fx-alignment guide
 https://edencoding.com/resources/css_properties/fx-alignment/
+
+
+============== Java Core and Javafx =================
+
+-- Java generics: get class of generic method's return type
+https://stackoverflow.com/questions/4213972/java-generics-get-class-of-generic-methods-return-type
+
+-- Java generics
+https://stackoverflow.com/questions/6008241/what-is-the-difference-between-e-t-and-for-java-generics
+https://metanit.com/java/tutorial/3.11.php
+https://habr.com/ru/company/sberbank/blog/416413/
+
+-- Dependency Injection and JavaFX
+https://stackoverflow.com/questions/40539310/dependency-injection-and-javafx
+
+-- Javafx dependency injection
+https://edencoding.com/dependency-injection/
+https://vocabhunter.github.io/2016/11/13/JavaFX-Dependency-Injection.html
+
+-- Java logging 
+https://www.baeldung.com/java-logging-intro
+https://javarush.ru/groups/posts/2200-logirovanie-razmotatjh-klubok-stektreysa
+
+-- javadoc
+https://docs.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html#@see
+
+-- Understanding Java 9 Modules
+https://www.oracle.com/cis/corporate/features/understanding-java-9-modules.html
+
+
 
 
