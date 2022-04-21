@@ -1,6 +1,7 @@
 package app.controllers;
 
-import app.controllers.support.SupplyMethods;
+import app.controllers.areaFinder1d.AreaFinder1dController;
+import app.controllers.areaFinder2d.AreaFinder2dController;
 import app.wrappers.SceneInfoWrapper;
 import app.wrappers.ScenesInfoContainer;
 import javafx.event.ActionEvent;

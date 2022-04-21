@@ -3,10 +3,10 @@ package app.wrappers;
 import java.util.Arrays;
 import java.util.List;
 
-import app.controllers.AreaFinder1dController;
-import app.controllers.AreaFinder2dController;
 import app.controllers.ChooseFunctionalitySceneController;
 import app.controllers.ISceneController;
+import app.controllers.areaFinder1d.AreaFinder1dController;
+import app.controllers.areaFinder2d.AreaFinder2dController;
 
 public class ScenesInfoContainer {
     

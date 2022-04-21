@@ -1,13 +1,16 @@
-package app.controllers;
+package app.controllers.areaFinder1d;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.controllers.ChooseFunctionalitySceneController;
+import app.controllers.ISceneController;
+import app.controllers.areaFinder2d.AreaFinder2dController;
+import app.controllers.areaFinder2d.tab_rulers.GeneralStatTabRuler;
+import app.controllers.areaFinder2d.tab_rulers.ScatterChartsTabRuler;
 import app.controllers.support.SupplyMethods;
-import app.controllers.tab_rulers.GeneralStatTabRuler;
-import app.controllers.tab_rulers.ScatterChartsTabRuler;
 import app.monte_carlo_area_finder.IFigureWithCalculatedArea;
 import app.monte_carlo_area_finder.IPointsGenerator;
 import app.monte_carlo_area_finder.MonteCarloAreaMethod;
@@ -181,9 +184,8 @@ public class AreaFinder1dController implements ISceneController {
         for (int i = 0; i < dataWrap.getAmountOfExperiments(); i++) {
             BigDecimal areaValue = areaFinder.findAreaValue(innerFigure, generator, dataWrap.getAmountOfPoints(), bigAreaValue);
             if (needToFindChance.isSelected()) {
-                //areaValue = areaValue.divide(BigDecimal.valueOf(bigAreaValue), 5, RoundingMode.CEILING);
                 areaValue = BigDecimal.valueOf(areaFinder.getAmountOfPointsInInnerArea(areaFinder.getLastRunGeneratedPoints()))
-                    .divide(BigDecimal.valueOf(areaFinder.getLastRunGeneratedPoints().size()), 5, RoundingMode.CEILING);
+                            .divide(BigDecimal.valueOf(areaFinder.getLastRunGeneratedPoints().size()), 5, RoundingMode.CEILING);
             }
             areasList.add(areaValue);
 

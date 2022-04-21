@@ -1,13 +1,14 @@
-package app.controllers;
+package app.controllers.areaFinder2d;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.controllers.ISceneController;
+import app.controllers.areaFinder2d.tab_rulers.FunctionDrawingTabRuler;
+import app.controllers.areaFinder2d.tab_rulers.GeneralStatTabRuler;
+import app.controllers.areaFinder2d.tab_rulers.ScatterChartsTabRuler;
 import app.controllers.support.SupplyMethods;
-import app.controllers.tab_rulers.FunctionDrawingTabRuler;
-import app.controllers.tab_rulers.GeneralStatTabRuler;
-import app.controllers.tab_rulers.ScatterChartsTabRuler;
 import app.monte_carlo_area_finder.IFigureWithCalculatedArea;
 import app.monte_carlo_area_finder.IPointsGenerator;
 import app.monte_carlo_area_finder.MonteCarloAreaMethod;
@@ -36,6 +37,7 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 
+import app.controllers.ChooseFunctionalitySceneController;
 /** 
  * 
  */

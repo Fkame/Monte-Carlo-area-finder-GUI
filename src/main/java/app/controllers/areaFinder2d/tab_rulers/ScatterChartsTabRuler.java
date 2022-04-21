@@ -1,4 +1,4 @@
-package app.controllers.tab_rulers;
+package app.controllers.areaFinder2d.tab_rulers;
 
 import java.util.List;
 
