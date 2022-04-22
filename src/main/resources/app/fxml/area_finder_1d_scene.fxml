@@ -6,7 +6,6 @@
 <?import javafx.scene.chart.ScatterChart?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -24,26 +23,26 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<SplitPane dividerPositions="0.32965931863727455" prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.areaFinder1d.AreaFinder1dController">
+<SplitPane dividerPositions="0.32965931863727455" prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.areaFinder1d.AreaFinder1dController">
    <items>
       <GridPane>
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
          </columnConstraints>
          <rowConstraints>
-            <RowConstraints maxHeight="244.0" minHeight="10.0" prefHeight="211.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="291.0" minHeight="10.0" prefHeight="43.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="244.0" minHeight="10.0" prefHeight="158.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="291.0" minHeight="10.0" prefHeight="65.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="190.0" minHeight="10.0" prefHeight="52.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="68.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="196.0" minHeight="10.0" prefHeight="46.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="166.0" minHeight="10.0" prefHeight="42.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="197.0" minHeight="10.0" prefHeight="85.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="129.0" minHeight="3.0" prefHeight="49.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="106.0" minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="129.0" minHeight="3.0" prefHeight="62.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="106.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="106.0" minHeight="10.0" prefHeight="29.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <VBox alignment="CENTER" spacing="5.0">
+            <VBox alignment="CENTER" prefHeight="210.0" prefWidth="306.0" spacing="5.0">
                <children>
                   <Label text="Режим генерации чисел">
                      <font>
@@ -69,14 +68,9 @@
                         </HBox>
                      </content>
                   </TitledPane>
-                  <CheckBox fx:id="needToFindChance" mnemonicParsing="false" text="Найти вероятность попадания в интервал вместо длины" wrapText="true">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </CheckBox>
                </children>
             </VBox>
-            <Label text="Количество точек для генерации:" wrapText="true" GridPane.rowIndex="1">
+            <Label text="Количество испытаний (точек для генерации)" wrapText="true" GridPane.rowIndex="1">
                <font>
                   <Font size="18.0" />
                </font>
@@ -86,7 +80,7 @@
                   <Font size="16.0" />
                </font>
             </TextField>
-            <Label text="Количество экспериментов:" wrapText="true" GridPane.rowIndex="3">
+            <Label text="Количество сеансов моделирования (повторений генерации)" wrapText="true" GridPane.rowIndex="3">
                <font>
                   <Font size="18.0" />
                </font>

@@ -61,6 +61,7 @@ public class GeneralStatTabRuler {
 
     public void showDataOnDataTable(int numOfPoints, String addInfo, List<BigDecimal> areasList, List<Double> avgValuesList) {
         if (areasList.size() == 0 | avgValuesList.size() == 0) throw new IllegalArgumentException("На отрисовку таблицы подан какой-то пустой массив");
+        if (areasList.size() != avgValuesList.size()) throw new IllegalArgumentException("У массива значений должен быть тот же размер, что и у массива средних значений");
         Double lastAvgValue = avgValuesList.get(avgValuesList.size() - 1);
         int amountOfExperiments = areasList.size();
 

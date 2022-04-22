@@ -30,5 +30,10 @@ public class StatePoint2D {
     public boolean getState() {
         return isInInnerArea;
     }
+
+    @Override
+    public String toString() {
+        return this.point.toString() + ", isInInnerArea=" + this.isInInnerArea;
+    }
     
 }

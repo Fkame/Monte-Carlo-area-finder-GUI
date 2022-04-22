@@ -51,11 +51,30 @@ public class MonteCarloAreaMethod {
      * @param amountOfPointsToGenerate
      * @return
      */
-    /*
-    public BigDecimal findProbabilityOfSuccess(int amountOfPointsToGenerate, IPointsGenerator generator, ) {
+    public BigDecimal findProbabilityOfSuccess(IFigureWithCalculatedArea innerFigure, IPointsGenerator generator, 
+                                                int amountOfPointsToGenerate, int amountOfExperiments) 
+    {
+        lastRunGeneratedPoints.clear();
+        int amountOfSuccess = 0;
+        int experiment = amountOfExperiments;
+        while (experiment > 0) {
+            boolean atLeastOneSuccess = false;
+            for (int i = 0; i < amountOfPointsToGenerate; i++) {
+                Point2D generatedPoint = generator.generatePoint();
+                boolean isPointInInnerArea = innerFigure.isPointInArea(generatedPoint);
+                StatePoint2D stateRandPoint = new StatePoint2D(generatedPoint, isPointInInnerArea);
+                lastRunGeneratedPoints.add(stateRandPoint);
+                atLeastOneSuccess = atLeastOneSuccess | isPointInInnerArea;
+            }
+            if (atLeastOneSuccess) amountOfSuccess += 1;
+            experiment -= 1;
+        }
 
+        BigDecimal success = BigDecimal.valueOf(amountOfSuccess);
+        BigDecimal all = BigDecimal.valueOf(amountOfExperiments);
+        return success.divide(all, this.scaleValue, RoundingMode.CEILING);
+        
     }
-    */
 
     public int getAmountOfPointsInInnerArea(List<StatePoint2D> points) {
         return (int)points.stream().filter(point -> point.getState() == true).count();

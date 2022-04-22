@@ -106,6 +106,9 @@ https://www.youtube.com/watch?v=AoKoCv6VtR0
 -fx-alignment guide
 https://edencoding.com/resources/css_properties/fx-alignment/
 
+-- How do I add margin to a JavaFX element using CSS?
+https://stackoverflow.com/questions/16977100/how-do-i-add-margin-to-a-javafx-element-using-css
+
 
 ============== Java Core and Javafx =================
 

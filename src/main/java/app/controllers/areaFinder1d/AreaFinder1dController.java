@@ -91,9 +91,6 @@ public class AreaFinder1dController implements ISceneController {
     @FXML 
     private ChoiceBox<String> generation_mode_choise;
 
-    @FXML
-    private CheckBox needToFindChance;
-
     /* ============================ Элементы вкладки с Общей Статистикой =======================*/
     
     /**
@@ -103,11 +100,11 @@ public class AreaFinder1dController implements ISceneController {
     private ScatterChart<Number, Number> all_points_chart;
 
     /**
-     * Набор точек, которые попали во внутреннюю фигуру на графике {@link AreaFinder2dController#all_points_chart}
+     * Набор точек, которые попали во внутреннюю фигуру на графике {@link AreaFinder1dController#all_points_chart}
      */
     private XYChart.Series<Number, Number> innerPointsSeries;
     /**
-     * Набор точек, которые НЕ попали во внутреннюю фигуру на графике {@link AreaFinder2dController#all_points_chart}
+     * Набор точек, которые НЕ попали во внутреннюю фигуру на графике {@link AreaFinder1dController#all_points_chart}
      */
     private XYChart.Series<Number, Number> outerPointsSeries;
 
@@ -174,33 +171,31 @@ public class AreaFinder1dController implements ISceneController {
             generator = MonteCarloSupport.createSimpleDoubleGenerator(leftOuterLimit, rightOuterLimit, 0, 0, 5);
         }
         else {
-            generator = MonteCarloSupport.createSimpleIntGenerator((int)leftOuterLimit, (int)rightOuterLimit + 1, 0, 0);
+            generator = MonteCarloSupport.createSimpleIntGenerator((int)leftOuterLimit, (int)rightOuterLimit, 0, 0);
         }
+        
+        areaFinder.setScaleValue(5);
+        BigDecimal possibilityValue = areaFinder.findProbabilityOfSuccess(innerFigure, generator, 
+                                                    dataWrap.getAmountOfPoints(), dataWrap.getAmountOfExperiments());
 
-        // Вычисление длины большого интервала для поиска длины 
-        double bigAreaValue = BigDecimal.valueOf(rightOuterLimit)
-                            .subtract(BigDecimal.valueOf(leftOuterLimit))
-                            .setScale(3, RoundingMode.CEILING)
-                            .doubleValue();
-
+        List<StatePoint2D> unmodifPointsList = areaFinder.getLastRunGeneratedPoints();
+        this.generalStatTabRuler.showDataOnPointsChart(unmodifPointsList);
         for (int i = 0; i < dataWrap.getAmountOfExperiments(); i++) {
-            BigDecimal areaValue = areaFinder.findAreaValue(innerFigure, generator, dataWrap.getAmountOfPoints(), bigAreaValue);
-            if (needToFindChance.isSelected()) {
-                areaValue = BigDecimal.valueOf(areaFinder.getAmountOfPointsInInnerArea(areaFinder.getLastRunGeneratedPoints()))
-                            .divide(BigDecimal.valueOf(areaFinder.getLastRunGeneratedPoints().size()), 5, RoundingMode.CEILING);
-            }
-            areasList.add(areaValue);
-
-            List<StatePoint2D> unmodifPointsList = areaFinder.getLastRunGeneratedPoints();
-            this.generalStatTabRuler.showDataOnPointsChart(unmodifPointsList);
-            this.scatterChartsTabRuler.drawExperimentPointsChart(i + 1, unmodifPointsList);
-
-            double currAvgAreaValue = SupplyMethods.calcAvgValueInList(i + 1, areasList, 3);
-            this.generalStatTabRuler.showDataOnLinesChart(i + 1, currAvgAreaValue);
-
-            currAvgAreasValuesList.add(currAvgAreaValue);
+            int startIdx = i * dataWrap.getAmountOfPoints();
+            int endIdx = (i + 1) * dataWrap.getAmountOfPoints();
+            this.scatterChartsTabRuler.drawExperimentPointsChart(i + 1, unmodifPointsList.subList(startIdx, endIdx));
         }
-        this.generalStatTabRuler.showDataOnDataTable(dataWrap.getAmountOfPoints(), dataWrap.toString(), areasList, currAvgAreasValuesList);
+
+        System.out.println(possibilityValue.doubleValue());
+
+        /*
+        double currAvgAreaValue = SupplyMethods.calcAvgValueInList(i + 1, areasList, 3);
+        this.generalStatTabRuler.showDataOnLinesChart(i + 1, currAvgAreaValue);
+        */
+
+        //currAvgAreasValuesList.add(currAvgAreaValue);
+       
+        //this.generalStatTabRuler.showDataOnDataTable(dataWrap.getAmountOfPoints(), dataWrap.toString(), areasList, currAvgAreasValuesList);
     }
 
     @FXML

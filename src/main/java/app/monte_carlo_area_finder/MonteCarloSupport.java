@@ -69,6 +69,7 @@ public class MonteCarloSupport {
      */
     public static int generateIntInInterval(int startValue, int endValue) throws IllegalArgumentException {
         if (startValue > endValue) throw new IllegalArgumentException("startValue > endValue in interval parameters");
+        if (startValue == endValue) return startValue;
         Random rand = new Random();
         return rand.nextInt(endValue - startValue) + startValue;
     }
