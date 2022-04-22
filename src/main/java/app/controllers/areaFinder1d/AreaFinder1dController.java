@@ -14,6 +14,7 @@ import app.controllers.support.SupplyMethods;
 import app.monte_carlo_area_finder.IFigureWithCalculatedArea;
 import app.monte_carlo_area_finder.IPointsGenerator;
 import app.monte_carlo_area_finder.MonteCarloAreaMethod;
+import app.monte_carlo_area_finder.MonteCarloSupport;
 import app.monte_carlo_area_finder.StatePoint2D;
 import app.wrappers.ExperimentsWrapper;
 import app.wrappers.InputDataWrapperFor1D;
@@ -168,17 +169,18 @@ public class AreaFinder1dController implements ISceneController {
         // Создание генератора чисел в пределах большого интервала.
         final double leftOuterLimit = dataWrap.getBigInterval().getStartX();
         final double rightOuterLimit = dataWrap.getBigInterval().getEndX();
-        IPointsGenerator generator = () -> {
-            if (this.generation_mode_choise.getSelectionModel().getSelectedIndex() == 0)
-                return new Point2D(MonteCarloAreaMethod.generateDoubleInInterval(leftOuterLimit, rightOuterLimit), 0);
-            else
-                return new Point2D(MonteCarloAreaMethod.generateIntInInterval((int)leftOuterLimit, (int)rightOuterLimit), 0);
-        };
+        IPointsGenerator generator = null;
+        if (this.generation_mode_choise.getSelectionModel().getSelectedIndex() == 0) {
+            generator = MonteCarloSupport.createSimpleDoubleGenerator(leftOuterLimit, rightOuterLimit, 0, 0, 5);
+        }
+        else {
+            generator = MonteCarloSupport.createSimpleIntGenerator((int)leftOuterLimit, (int)rightOuterLimit + 1, 0, 0);
+        }
 
-        // Вычисление длины большого интервала
+        // Вычисление длины большого интервала для поиска длины 
         double bigAreaValue = BigDecimal.valueOf(rightOuterLimit)
                             .subtract(BigDecimal.valueOf(leftOuterLimit))
-                            .setScale(3)
+                            .setScale(3, RoundingMode.CEILING)
                             .doubleValue();
 
         for (int i = 0; i < dataWrap.getAmountOfExperiments(); i++) {

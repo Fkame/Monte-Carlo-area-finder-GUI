@@ -1,6 +1,7 @@
 package app.controllers.areaFinder2d;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import app.controllers.support.SupplyMethods;
 import app.monte_carlo_area_finder.IFigureWithCalculatedArea;
 import app.monte_carlo_area_finder.IPointsGenerator;
 import app.monte_carlo_area_finder.MonteCarloAreaMethod;
+import app.monte_carlo_area_finder.MonteCarloSupport;
 import app.monte_carlo_area_finder.StatePoint2D;
 import app.wrappers.ExperimentsWrapper;
 import app.wrappers.InputDataWrapperFor2D;
@@ -211,14 +213,14 @@ public class AreaFinder2dController implements ISceneController{
 
         final Rectangle2D bigArea = dataWrap.getBigArea();
         IPointsGenerator generator = () -> {
-            double randX = MonteCarloAreaMethod.generateDoubleInInterval(bigArea.getMinX(), bigArea.getMaxX());
-            double randY = MonteCarloAreaMethod.generateDoubleInInterval(bigArea.getMinY(), bigArea.getMaxY());
+            double randX = MonteCarloSupport.generateDoubleInInterval(bigArea.getMinX(), bigArea.getMaxX(), 5);
+            double randY = MonteCarloSupport.generateDoubleInInterval(bigArea.getMinY(), bigArea.getMaxY(), 5);
             return new Point2D(randX, randY);
         };
 
         double bigAreaValue = BigDecimal.valueOf(bigArea.getWidth())
                         .multiply(BigDecimal.valueOf(bigArea.getHeight()))
-                        .setScale(3)
+                        .setScale(3, RoundingMode.CEILING)
                         .doubleValue();
 
         ArrayList<BigDecimal> areasList = new ArrayList<>();

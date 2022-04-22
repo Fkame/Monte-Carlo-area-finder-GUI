@@ -22,6 +22,11 @@ public class MonteCarloAreaMethod {
         lastRunGeneratedPoints = new ArrayList<StatePoint2D>();
     }
 
+    public MonteCarloAreaMethod(int scaleValue) {
+        this.scaleValue = scaleValue;
+        lastRunGeneratedPoints = new ArrayList<StatePoint2D>();
+    }
+
     public BigDecimal findAreaValue(IFigureWithCalculatedArea innerFigure, IPointsGenerator generator, 
                                     int amountOfPointsToGenerate, double bigAreaValue)
     {       
@@ -39,42 +44,21 @@ public class MonteCarloAreaMethod {
                             .multiply(BigDecimal.valueOf(bigAreaValue))
                             .divide(BigDecimal.valueOf(amountOfPointsToGenerate), this.scaleValue, RoundingMode.CEILING);
         return areaValue;
-
-    }
-
-    public int getAmountOfPointsInInnerArea(List<StatePoint2D> points) {
-        return (int)points.stream().filter(point -> point.getState() == true).count();
-    }
-
-    /**
-     * Метод генерирует целое число с равномерным распределением в заданном интервале.
-     * @param startValue начало интервала для генерации числа.
-     * @param endValue конец интервала для генерации числа.
-     * @return сгенерированное целое число с равномерным распределением.
-     * @throws IllegalArgumentException если {@code startValue} > {@code endValue} будет выброшено исключение.
-     */
-    public static int generateIntInInterval(int startValue, int endValue) throws IllegalArgumentException {
-        if (startValue > endValue) throw new IllegalArgumentException("startValue > endValue in interval parameters");
-        Random rand = new Random();
-        //return rand.nextInt() * (endValue - startValue) + startValue;
-        return rand.nextInt(endValue - startValue) + startValue;
     }
 
     /**
      * 
-     * @param startValue
-     * @param endValue
+     * @param amountOfPointsToGenerate
      * @return
-     * @throws IllegalArgumentException
      */
-    public static double generateDoubleInInterval(double startValue, double endValue) throws IllegalArgumentException {
-        Random rand = new Random();
-        BigDecimal maxValue = BigDecimal.valueOf(endValue);
-        BigDecimal minValue = BigDecimal.valueOf(startValue);
-        return BigDecimal.valueOf(rand.nextDouble())
-            .multiply(maxValue.subtract(minValue))
-            .add(minValue)
-            .doubleValue();
+    /*
+    public BigDecimal findProbabilityOfSuccess(int amountOfPointsToGenerate, IPointsGenerator generator, ) {
+
+    }
+    */
+
+    public int getAmountOfPointsInInnerArea(List<StatePoint2D> points) {
+        return (int)points.stream().filter(point -> point.getState() == true).count();
     }
 
     /**
