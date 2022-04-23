@@ -6,17 +6,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.controllers.ISceneController;
+import app.controllers.areaFinder2d.wrappers.ExperimentsWrapper2d;
 import app.controllers.areaFinder2d.tab_rulers.FunctionDrawingTabRuler;
 import app.controllers.areaFinder2d.tab_rulers.GeneralStatTabRuler;
 import app.controllers.areaFinder2d.tab_rulers.ScatterChartsTabRuler;
+import app.controllers.areaFinder2d.wrappers.InputDataWrapperFor2D;
 import app.controllers.support.SupplyMethods;
 import app.monte_carlo_area_finder.IFigureWithCalculatedArea;
 import app.monte_carlo_area_finder.IPointsGenerator;
 import app.monte_carlo_area_finder.MonteCarloAreaMethod;
 import app.monte_carlo_area_finder.MonteCarloSupport;
 import app.monte_carlo_area_finder.StatePoint2D;
-import app.wrappers.ExperimentsWrapper;
-import app.wrappers.InputDataWrapperFor2D;
 import app.wrappers.SceneInfoWrapper;
 import app.wrappers.ScenesInfoContainer;
 import javafx.event.ActionEvent;
@@ -137,7 +137,7 @@ public class AreaFinder2dController implements ISceneController{
      * TreeTableView элемент, в котором записываются результаты каждого эксперимента и считается среднее значение.
      */
     @FXML
-    private TreeTableView<ExperimentsWrapper> data_table_inGeneral;
+    private TreeTableView<ExperimentsWrapper2d> data_table_inGeneral;
 
     @FXML
     private Accordion statisticPanesContainer;
@@ -392,23 +392,23 @@ public class AreaFinder2dController implements ISceneController{
 
     private void prepareTables() {
         // Создание колонок
-        TreeTableColumn<ExperimentsWrapper, String> expNameCol = new TreeTableColumn<ExperimentsWrapper, String>("Наименование");
+        TreeTableColumn<ExperimentsWrapper2d, String> expNameCol = new TreeTableColumn<>("Наименование");
         expNameCol.prefWidthProperty().set(200);
-        TreeTableColumn<ExperimentsWrapper, Integer> expElemsNumCol = new TreeTableColumn<ExperimentsWrapper, Integer>("Кол-во элементов");
+        TreeTableColumn<ExperimentsWrapper2d, Integer> expElemsNumCol = new TreeTableColumn<>("Кол-во элементов");
         expElemsNumCol.prefWidthProperty().set(100);
-        TreeTableColumn<ExperimentsWrapper, Double> expAreaValueCol = new TreeTableColumn<ExperimentsWrapper, Double>("Значение площади");
+        TreeTableColumn<ExperimentsWrapper2d, Double> expAreaValueCol = new TreeTableColumn<>("Значение площади");
         expAreaValueCol.prefWidthProperty().set(120);
-        TreeTableColumn<ExperimentsWrapper, Double> expAvgAreaValueCol = new TreeTableColumn<ExperimentsWrapper, Double>("AVG площадь");
+        TreeTableColumn<ExperimentsWrapper2d, Double> expAvgAreaValueCol = new TreeTableColumn<>("AVG площадь");
         expAvgAreaValueCol.prefWidthProperty().set(100);
-        TreeTableColumn<ExperimentsWrapper, String> expAdditionalCol = new TreeTableColumn<ExperimentsWrapper, String>("Доп.информация");
+        TreeTableColumn<ExperimentsWrapper2d, String> expAdditionalCol = new TreeTableColumn<>("Доп.информация");
         expAdditionalCol.prefWidthProperty().set(200);
 
         // Указываем, какую переменную из класса нужно получить с помощью соответствующего геттера и вставить в ячейку соотвествующей колонки
-        expNameCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, String>("name"));
-        expElemsNumCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, Integer>("amountOfElements"));
-        expAreaValueCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, Double>("areaValue"));
-        expAvgAreaValueCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, Double>("avgAreaValue"));
-        expAdditionalCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, String>("additionalInfo"));
+        expNameCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper2d, String>("name"));
+        expElemsNumCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper2d, Integer>("amountOfElements"));
+        expAreaValueCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper2d, Double>("areaValue"));
+        expAvgAreaValueCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper2d, Double>("avgAreaValue"));
+        expAdditionalCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper2d, String>("additionalInfo"));
 
         data_table_inGeneral.getColumns().addAll(expNameCol, expElemsNumCol, expAreaValueCol, expAvgAreaValueCol, expAdditionalCol);
     }

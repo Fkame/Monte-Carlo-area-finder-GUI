@@ -12,11 +12,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 
-public class ScatterChartsTabRuler {
+public class ScatterChartsTabRuler1d {
     
     private FlowPane pointCharts_container;
 
-    public ScatterChartsTabRuler (FlowPane pointCharts_container) {
+    public ScatterChartsTabRuler1d (FlowPane pointCharts_container) {
         this.pointCharts_container = pointCharts_container;
     }
 

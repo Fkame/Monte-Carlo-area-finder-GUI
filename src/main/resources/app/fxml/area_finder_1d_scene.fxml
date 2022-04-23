@@ -158,9 +158,9 @@
                               </ScatterChart>
                            </content>
                         </TitledPane>
-                        <TitledPane expanded="false" text="Изменение средней площади с каждым экспериментов">
+                        <TitledPane expanded="false" text="Количество успехов в каждом эксперименте">
                            <content>
-                              <LineChart fx:id="accuracy_chart" prefHeight="312.0" prefWidth="278.0">
+                              <LineChart fx:id="success_amount_chart" prefHeight="312.0" prefWidth="278.0">
                                 <xAxis>
                                   <NumberAxis side="BOTTOM" />
                                 </xAxis>

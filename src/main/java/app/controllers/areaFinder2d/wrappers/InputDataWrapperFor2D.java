@@ -1,4 +1,4 @@
-package app.wrappers;
+package app.controllers.areaFinder2d.wrappers;
 
 import java.util.ArrayList;
 

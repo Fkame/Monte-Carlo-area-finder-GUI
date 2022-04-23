@@ -1,34 +1,30 @@
 package app.controllers.areaFinder1d;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
 import app.controllers.ChooseFunctionalitySceneController;
 import app.controllers.ISceneController;
-import app.controllers.areaFinder2d.AreaFinder2dController;
-import app.controllers.areaFinder2d.tab_rulers.GeneralStatTabRuler;
-import app.controllers.areaFinder2d.tab_rulers.ScatterChartsTabRuler;
+import app.controllers.areaFinder1d.wrappers.ExperimentsWrapper1d;
+import app.controllers.areaFinder1d.wrappers.InputDataWrapperFor1D;
+import app.controllers.areaFinder1d.tab_rulers.GeneralStatTabRuler1d;
+import app.controllers.areaFinder1d.tab_rulers.ScatterChartsTabRuler1d;
 import app.controllers.support.SupplyMethods;
 import app.monte_carlo_area_finder.IFigureWithCalculatedArea;
 import app.monte_carlo_area_finder.IPointsGenerator;
 import app.monte_carlo_area_finder.MonteCarloAreaMethod;
 import app.monte_carlo_area_finder.MonteCarloSupport;
 import app.monte_carlo_area_finder.StatePoint2D;
-import app.wrappers.ExperimentsWrapper;
-import app.wrappers.InputDataWrapperFor1D;
 import app.wrappers.SceneInfoWrapper;
 import app.wrappers.ScenesInfoContainer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Accordion;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
@@ -49,12 +45,12 @@ public class AreaFinder1dController implements ISceneController {
     /**
      * Объект, в который вынесен весь функционал по управлению выводом в UI элементы во вкладке с общей статистикой. 
      */
-    private GeneralStatTabRuler generalStatTabRuler;
+    private GeneralStatTabRuler1d generalStatTabRuler;
 
      /**
      * Объект, в который вынесен весь функционал по управлению выводом в UI элементы во вкладке с графиками точек каждого эксперимента. 
      */
-    private ScatterChartsTabRuler scatterChartsTabRuler;
+    private ScatterChartsTabRuler1d scatterChartsTabRuler;
 
     /* ============================ Элементы общего запуска модели =======================*/
 
@@ -112,18 +108,18 @@ public class AreaFinder1dController implements ISceneController {
      * Среднее значение площади в зависимости от числа экспериментов
      */
     @FXML
-    private LineChart<Number, Number> accuracy_chart;
+    private LineChart<Number, Number> success_amount_chart;
 
     /**
      * Набор точек 
      */
-    private  XYChart.Series<Number, Number> accuracySeries;
+    private  XYChart.Series<Number, Number> successSeries;
 
     /**
      * TreeTableView элемент, в котором записываются результаты каждого эксперимента и считается среднее значение.
      */
     @FXML
-    private TreeTableView<ExperimentsWrapper> data_table_inGeneral;
+    private TreeTableView<ExperimentsWrapper1d> data_table_inGeneral;
 
     @FXML
     private Accordion statisticPanesContainer;
@@ -175,27 +171,31 @@ public class AreaFinder1dController implements ISceneController {
         }
         
         areaFinder.setScaleValue(5);
+
+        // Сам ответ
         BigDecimal possibilityValue = areaFinder.findProbabilityOfSuccess(innerFigure, generator, 
                                                     dataWrap.getAmountOfPoints(), dataWrap.getAmountOfExperiments());
 
+        // Получение промежуточной информации для статистики
         List<StatePoint2D> unmodifPointsList = areaFinder.getLastRunGeneratedPoints();
         this.generalStatTabRuler.showDataOnPointsChart(unmodifPointsList);
+
+        List<ExperimentsWrapper1d> exps = new ArrayList<>();
         for (int i = 0; i < dataWrap.getAmountOfExperiments(); i++) {
             int startIdx = i * dataWrap.getAmountOfPoints();
             int endIdx = (i + 1) * dataWrap.getAmountOfPoints();
-            this.scatterChartsTabRuler.drawExperimentPointsChart(i + 1, unmodifPointsList.subList(startIdx, endIdx));
+
+            List<StatePoint2D> currExperimentPoints = unmodifPointsList.subList(startIdx, endIdx);
+            this.scatterChartsTabRuler.drawExperimentPointsChart(i + 1, currExperimentPoints);
+
+            int amountOfSuccess = areaFinder.getAmountOfPointsInInnerArea(currExperimentPoints);
+            this.generalStatTabRuler.showDataOnLinesChart(i + 1, amountOfSuccess);
+
+            exps.add(new ExperimentsWrapper1d(i + 1, "Эксперимент", dataWrap.getAmountOfPoints(), 
+                                        null, amountOfSuccess, ""));
         }
-
-        System.out.println(possibilityValue.doubleValue());
-
-        /*
-        double currAvgAreaValue = SupplyMethods.calcAvgValueInList(i + 1, areasList, 3);
-        this.generalStatTabRuler.showDataOnLinesChart(i + 1, currAvgAreaValue);
-        */
-
-        //currAvgAreasValuesList.add(currAvgAreaValue);
-       
-        //this.generalStatTabRuler.showDataOnDataTable(dataWrap.getAmountOfPoints(), dataWrap.toString(), areasList, currAvgAreasValuesList);
+        int amountOfSuccess = (int)exps.stream().filter((exp) -> exp.getAmountOfSuccess() > 0).count();
+        this.generalStatTabRuler.showDataOnTable(exps, possibilityValue.doubleValue(), amountOfSuccess, null); 
     }
 
     @FXML
@@ -270,9 +270,9 @@ public class AreaFinder1dController implements ISceneController {
     }
 
     private void prepareTabRulers() {
-        this.generalStatTabRuler = new GeneralStatTabRuler(all_points_chart, innerPointsSeries, outerPointsSeries, 
-                                            accuracy_chart, accuracySeries, data_table_inGeneral);
-        this.scatterChartsTabRuler = new ScatterChartsTabRuler(this.pointCharts_container);
+        this.generalStatTabRuler = new GeneralStatTabRuler1d(all_points_chart, innerPointsSeries, outerPointsSeries, 
+                                            success_amount_chart, successSeries, data_table_inGeneral);
+        this.scatterChartsTabRuler = new ScatterChartsTabRuler1d(this.pointCharts_container);
     }
 
     private void prepareCharts() {
@@ -280,55 +280,58 @@ public class AreaFinder1dController implements ISceneController {
         // Создание наборов значений для графиков
         innerPointsSeries = new XYChart.Series<Number, Number>();
         outerPointsSeries = new XYChart.Series<Number, Number>();
-        accuracySeries = new XYChart.Series<Number, Number>();
+        successSeries = new XYChart.Series<Number, Number>();
 
         all_points_chart.getData().clear();
         all_points_chart.getData().addAll(innerPointsSeries, outerPointsSeries);
 
-        accuracy_chart.getData().clear();
-        accuracy_chart.getData().add(accuracySeries);
+        success_amount_chart.getData().clear();
+        success_amount_chart.getData().add(successSeries);
 
         // Названия графиков
         all_points_chart.setTitle("Сгенерированные точки в интервале");
-        accuracy_chart.setTitle("Среднее значение длины линии на интервале с каждым новым экспериментом");
+        success_amount_chart.setTitle("Количество успехов в каждом сеансе");
 
         // Подписи осей
-        accuracy_chart.getXAxis().setLabel("Номер эксперимента");
-        accuracy_chart.getYAxis().setLabel("Значение длины линии на интервале");
+        success_amount_chart.getXAxis().setLabel("Номер эксперимента");
+        success_amount_chart.getYAxis().setLabel("Кол-во успехов");
 
         // Наименования наборов значений для подписей в легенде графика
         innerPointsSeries.setName("Точки во внутренней линии");
         outerPointsSeries.setName("Точки во внешней линии");
-        accuracySeries.setName("AVG длины с учётом предыдущих экспериментов");
+        successSeries.setName("Кол-во успехов за 1 сеанс");
     }
 
     private void prepareTables() {
         // Создание колонок
-        TreeTableColumn<ExperimentsWrapper, String> expNameCol = new TreeTableColumn<ExperimentsWrapper, String>("Наименование");
-        expNameCol.prefWidthProperty().set(200);
-        TreeTableColumn<ExperimentsWrapper, Integer> expElemsNumCol = new TreeTableColumn<ExperimentsWrapper, Integer>("Кол-во элементов");
-        expElemsNumCol.prefWidthProperty().set(100);
-        TreeTableColumn<ExperimentsWrapper, Double> expAreaValueCol = new TreeTableColumn<ExperimentsWrapper, Double>("Найденное значение");
-        expAreaValueCol.prefWidthProperty().set(120);
-        TreeTableColumn<ExperimentsWrapper, Double> expAvgAreaValueCol = new TreeTableColumn<ExperimentsWrapper, Double>("AVG значение");
-        expAvgAreaValueCol.prefWidthProperty().set(100);
-        TreeTableColumn<ExperimentsWrapper, String> expAdditionalCol = new TreeTableColumn<ExperimentsWrapper, String>("Доп.информация");
-        expAdditionalCol.prefWidthProperty().set(200);
+        TreeTableColumn<ExperimentsWrapper1d, Integer> numCol = new TreeTableColumn<>("№");
+        numCol.prefWidthProperty().set(50);
+        TreeTableColumn<ExperimentsWrapper1d, String> nameCol = new TreeTableColumn<>("Наименование");
+        nameCol.prefWidthProperty().set(200);
+        TreeTableColumn<ExperimentsWrapper1d, Integer> amountOfInnerElementsCol = new TreeTableColumn<>("Кол-во вложенных элементов");
+        amountOfInnerElementsCol.prefWidthProperty().set(200);
+        TreeTableColumn<ExperimentsWrapper1d, Double> possibilityValueCol = new TreeTableColumn<>("Найденная Вероятность");
+        possibilityValueCol.prefWidthProperty().set(200);
+        TreeTableColumn<ExperimentsWrapper1d, Integer> amountOfSuccessCol = new TreeTableColumn<>("Количество успехов");
+        amountOfSuccessCol.prefWidthProperty().set(200);
+        TreeTableColumn<ExperimentsWrapper1d, String> additionalCol = new TreeTableColumn<>("Доп.информация");
+        additionalCol.prefWidthProperty().set(200);
 
         // Указываем, какую переменную из класса нужно получить с помощью соответствующего геттера и вставить в ячейку соотвествующей колонки
-        expNameCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, String>("name"));
-        expElemsNumCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, Integer>("amountOfElements"));
-        expAreaValueCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, Double>("areaValue"));
-        expAvgAreaValueCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, Double>("avgAreaValue"));
-        expAdditionalCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper, String>("additionalInfo"));
+        numCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper1d, Integer>("number"));
+        nameCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper1d, String>("name"));
+        amountOfInnerElementsCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper1d, Integer>("amountOfInnerElements"));
+        possibilityValueCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper1d, Double>("possibilityValue"));
+        amountOfSuccessCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper1d, Integer>("amountOfSuccess"));
+        additionalCol.setCellValueFactory(new TreeItemPropertyValueFactory<ExperimentsWrapper1d, String>("additionalInfo"));
 
-        data_table_inGeneral.getColumns().addAll(expNameCol, expElemsNumCol, expAreaValueCol, expAvgAreaValueCol, expAdditionalCol);
+        data_table_inGeneral.getColumns().addAll(numCol, nameCol, amountOfInnerElementsCol, possibilityValueCol, amountOfSuccessCol, additionalCol);
     }
 
     @Override
     public void prepareStageBeforeShow() {
         stage.centerOnScreen();
-        stage.setTitle("Поиск площади на плоскости");
+        stage.setTitle("Поиск вероятности выпадения числа за несколько попыток");
         stage.setResizable(true);
     }
 

@@ -3,9 +3,8 @@ package app.controllers.areaFinder2d.tab_rulers;
 import java.math.BigDecimal;
 import java.util.List;
 
+import app.controllers.areaFinder2d.wrappers.ExperimentsWrapper2d;
 import app.monte_carlo_area_finder.StatePoint2D;
-import app.wrappers.ExperimentsWrapper;
-import app.wrappers.InputDataWrapperFor2D;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
@@ -26,12 +25,12 @@ public class GeneralStatTabRuler {
 
     private  XYChart.Series<Number, Number> accuracySeries;
 
-    private TreeTableView<ExperimentsWrapper> data_table_inGeneral;
+    private TreeTableView<ExperimentsWrapper2d> data_table_inGeneral;
 
     public GeneralStatTabRuler(ScatterChart<Number, Number> all_points_chart, 
                                 XYChart.Series<Number, Number> innerPointsSeries, XYChart.Series<Number, Number> outerPointsSeries, 
                                 LineChart<Number, Number> accuracy_chart, XYChart.Series<Number, Number> accuracySeries, 
-                                TreeTableView<ExperimentsWrapper> data_table_inGeneral) 
+                                TreeTableView<ExperimentsWrapper2d> data_table_inGeneral) 
     {
         this.all_points_chart = all_points_chart;
         this.innerPointsSeries = innerPointsSeries;
@@ -65,16 +64,16 @@ public class GeneralStatTabRuler {
         Double lastAvgValue = avgValuesList.get(avgValuesList.size() - 1);
         int amountOfExperiments = areasList.size();
 
-        ExperimentsWrapper rootValue = new ExperimentsWrapper("Список экспериментов", amountOfExperiments, lastAvgValue, lastAvgValue, addInfo);
-        TreeItem<ExperimentsWrapper> generalTable_itemRoot = new TreeItem<ExperimentsWrapper>(rootValue);
+        ExperimentsWrapper2d rootValue = new ExperimentsWrapper2d("Список экспериментов", amountOfExperiments, lastAvgValue, lastAvgValue, addInfo);
+        TreeItem<ExperimentsWrapper2d> generalTable_itemRoot = new TreeItem<>(rootValue);
         data_table_inGeneral.setRoot(generalTable_itemRoot);
 
         for (int i = 0; i < amountOfExperiments; i++) {
             double areaValue = areasList.get(i).setScale(SCALE_VALUE).doubleValue();
             Double currAvgAreaValue = avgValuesList.get(i);
-            ExperimentsWrapper eInfo = 
-                        new ExperimentsWrapper("Эксперимент №" + (i + 1), numOfPoints, areaValue, currAvgAreaValue, "");
-            TreeItem<ExperimentsWrapper> eItem = new TreeItem<>(eInfo);
+            ExperimentsWrapper2d eInfo = 
+                        new ExperimentsWrapper2d("Эксперимент №" + (i + 1), numOfPoints, areaValue, currAvgAreaValue, "");
+            TreeItem<ExperimentsWrapper2d> eItem = new TreeItem<>(eInfo);
             generalTable_itemRoot.getChildren().add(eItem);
         }
     }

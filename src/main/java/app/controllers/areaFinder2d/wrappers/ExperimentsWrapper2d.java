@@ -1,18 +1,18 @@
-package app.wrappers;
+package app.controllers.areaFinder2d.wrappers;
 
 /**
  * Класс, который нужен для вывода данных в TreeTableView.
  * <p>Пакет, в котором он находится, нужно отметить в {@code module-info.java} как {@code opens ... to javafx.base}, иначе
  * будет ошибка {@code IllegalStateException}, когда Treetableview попробует извлечь значение из объекта с помощью рекурсии.
  */
-public class ExperimentsWrapper {
+public class ExperimentsWrapper2d {
     public String name;
     public Integer amountOfElements;
     public Double areaValue;
     public Double avgAreaValue;
     public String additionalInfo;
 
-    public ExperimentsWrapper(String name, Integer amountOfElements, Double areaValue, Double avgAreaValue, String additionalInfo) {
+    public ExperimentsWrapper2d(String name, Integer amountOfElements, Double areaValue, Double avgAreaValue, String additionalInfo) {
         this.name = name;
         this.amountOfElements = amountOfElements;
         this.areaValue = areaValue;
