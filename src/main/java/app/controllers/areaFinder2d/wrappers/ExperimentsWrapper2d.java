@@ -1,7 +1,7 @@
 package app.controllers.areaFinder2d.wrappers;
 
 /**
- * Класс, который нужен для вывода данных в TreeTableView.
+ * Класс, который нужен для вывода данных в TreeTableView. Каждая переменная это стобец в таблице.
  * <p>Пакет, в котором он находится, нужно отметить в {@code module-info.java} как {@code opens ... to javafx.base}, иначе
  * будет ошибка {@code IllegalStateException}, когда Treetableview попробует извлечь значение из объекта с помощью рекурсии.
  */
