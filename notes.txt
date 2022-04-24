@@ -137,6 +137,12 @@ https://docs.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html#@see
 -- Understanding Java 9 Modules
 https://www.oracle.com/cis/corporate/features/understanding-java-9-modules.html
 
+-- jlink javafx
+https://dev.to/cherrychain/javafx-jlink-and-jpackage-h9
+
+-- jlink hide cmd
+https://stackoverflow.com/questions/54132781/how-to-run-jlink-generated-java-runtime-image-without-cmd-window
+
 
 
 
